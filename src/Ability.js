@@ -1,5 +1,6 @@
 import co from 'co';
 import debug from 'debug';
+import assert from 'assert';
 import { Request } from './Request';
 import { getEventName } from './getEventName';
 import { resolve } from './resolve';
@@ -16,16 +17,20 @@ export class Ability {
     }
 
     use(fn) {
+        assert(typeof fn === 'function', 'Expected function');
         uLog(`adding middleware function: ${fn.name || '<unnamed function>'}`);
+
         this._middleware.push(fn);
         return this;
     }
 
-    on(event, fn) {
+    on(event, handler) {
+        assert(typeof event === 'string', 'Expected string for event type');
+        assert(typeof handler === 'function', 'Expected function for event handler');
         if (this._handlers[event]) oLog(`averwrote handler for event: ${event}`);
         else oLog(`added handler for event: ${event}`);
 
-        this._handlers[event] = fn;
+        this._handlers[event] = handler;
         return this;
     }
 
@@ -33,7 +38,6 @@ export class Ability {
         const req = new Request(event);
         const type = getEventName(event);
         const handler = this._handlers[type];
-
 
         if (!handler) hLog(`ao handler found for event: "${type}".`);
         else hLog(`handling event: ${type}`);

@@ -61,4 +61,12 @@ describe('Ability middleware', function() {
                 expect(handler).to.not.have.been.called;
             });
     });
+
+    it('should execute middleware even when no handler exists(?)', function() {
+        const spy = sinon.spy();
+        app.use(spy);
+        app.handle(launchRequest).then(function() {
+            expect(spy).to.have.been.called;
+        });
+    });
 });
