@@ -1,7 +1,13 @@
 import get from 'lodash/get';
+import debug from 'debug';
+
+const log = debug('alexa-ability:getEventName');
 
 export function getEventName(event) {
-    switch(get(event, 'request.type')) {
+    const type = get(event, 'request.type');
+    log(`getting event name for request type: ${type}`);
+
+    switch(type) {
         case "LaunchRequest":
             return "launch";
 
