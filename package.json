@@ -6,8 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickclaw/alexa-ability"
+  },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Nicholas Clawson",
+    "email": "nickclaw@gmail.com",
+    "url": "nickclaw.com"
+  },
   "license": "MIT",
   "dependencies": {
     "co": "^4.6.0",
