@@ -19,7 +19,6 @@
   "license": "MIT",
   "dependencies": {
     "co": "^4.6.0",
-    "es6-promise": "^3.0.2",
     "lodash": "^4.0.1"
   },
   "devDependencies": {
@@ -31,6 +30,7 @@
     "babel-register": "^6.4.3",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.2.0",
+    "es6-promise": "^3.0.2",
     "mocha": "^2.3.4",
     "sinon": "^1.17.2"
   }
