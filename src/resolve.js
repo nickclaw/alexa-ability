@@ -1,6 +1,6 @@
 
 export function resolve(fn, ...args) {
-    if (fn.length <= 1)
+    if (fn.length <= args.length)
         return Promise.resolve(fn(...args));
 
     return new Promise(function(res, rej) {

@@ -65,4 +65,14 @@ describe('resolve(fn, ...args)', function() {
         expect(result).to.be.instanceOf(Promise);
         return result.should.be.rejectedWith(err);
     });
+
+    it('should work with n expected arguments', function() {
+        const fn = sinon.spy(function(a, b, c, done) {
+            done(null, val);
+        });
+
+        const result = resolve(fn, 1, 2, 3);
+        expect(result).to.be.instanceOf(Promise);
+        return result.should.eventually.equal(val);
+    });
 });

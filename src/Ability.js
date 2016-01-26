@@ -26,7 +26,7 @@ export class Ability {
         const handler = this._handlers[type];
 
         console.log(`Running ${this._middleware.length} middleware.`);
-        for (fn in this._middleware) {
+        for (let fn of this._middleware) {
             yield resolve(fn, req);
         }
 
