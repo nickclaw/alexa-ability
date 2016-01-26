@@ -1,16 +1,17 @@
+import get from 'lodash/get';
 
 export function getEventName(event) {
-    switch(event.request.type) {
+    switch(get(event, 'request.type')) {
         case "LaunchRequest":
             return "launch";
 
         case "IntentRequest":
-            return event.request.intent.name;
+            return get(event, 'request.intent.name');
 
         case "SessionEndedRequest":
             return "end";
 
         default:
-            return "unhandleIntent";
+            return "unhandledIntent";
     }
 }

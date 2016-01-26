@@ -4,6 +4,6 @@ export function resolve(fn, ...args) {
         return Promise.resolve(fn(...args));
 
     return new Promise(function(res, rej) {
-        fn(...args, err => err ? rej(err) : res());
+        fn(...args, (err, val) => err ? rej(err) : res(val));
     });
 }
