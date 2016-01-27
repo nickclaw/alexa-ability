@@ -1,4 +1,5 @@
 import { getEventName } from '../src/getEventName';
+import * as e from '../src/standardEvents';
 
 const launchRequest = require('./fixtures/launch-request');
 const intentRequest = require('./fixtures/intent-request');
@@ -9,7 +10,7 @@ describe('getEventName(event)', function() {
 
     it('should return "launch" for a "LaunchRequest" event', function() {
         const type = getEventName(launchRequest);
-        expect(type).to.equal("launch");
+        expect(type).to.equal(e.launch);
     });
 
     it('should return the intent name for an IntentRequest', function() {
@@ -19,11 +20,11 @@ describe('getEventName(event)', function() {
 
     it('should return "end" for a "SessionEndedRequest" event', function() {
         const type = getEventName(sessionEndedRequest);
-        expect(type).to.equal("end");
+        expect(type).to.equal(e.end);
     });
 
-    it('should return "unhandledIntent" for an unknown event', function() {
+    it('should return "unknownEvent" for an unknown event', function() {
         const type = getEventName(unknownRequest);
-        expect(type).to.equal("unhandledIntent");
+        expect(type).to.equal(e.unknownEvent);
     });
 });

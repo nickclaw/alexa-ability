@@ -1,8 +1,10 @@
+import noop from 'lodash/noop';
 import { Ability } from '../src/Ability';
 import { Request } from '../src/Request';
-import noop from 'lodash/noop';
+import * as e from '../src/standardEvents';
 
 const launchRequest = require('./fixtures/launch-request');
+const unknownRequest = require('./fixtures/unknown-request');
 
 describe('Ability', function() {
 
@@ -52,6 +54,37 @@ describe('Ability', function() {
             app.use(function(){ throw err });
             return app.handle(launchRequest).should.be.rejected
                 .then(err => expect(err).to.equal(err));
+        });
+
+        it('should attempt the error handler when middleware fails', function() {
+            const err = new Error();
+            const spy = sinon.spy();
+
+            app.use(function(){ throw err });
+            app.on(e.error, spy);
+
+            return app.handle(launchRequest)
+                .then(() => expect(spy).to.have.been.called);
+        });
+
+        it('should attempt the error handler when the handler fails', function() {
+            const err = new Error();
+            const spy = sinon.spy();
+
+            app.on(e.launch, function(){ throw err });
+            app.on(e.error, spy);
+
+            return app.handle(launchRequest)
+                .then(() => expect(spy).to.have.been.called);
+        });
+
+        it('should use the "unknownEvent" handler for unknown events', function() {
+            const spy = sinon.spy();
+
+            app.on(e.unknownEvent, spy);
+
+            return app.handle(unknownRequest)
+                .then(() => expect(spy).to.have.been.called);
         });
     });
 });

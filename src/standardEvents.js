@@ -1,8 +1,22 @@
 /**
- * The builtin Amazon intents
- * Taken from: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/implementing-the-built-in-intents
+ * Internal events
  */
 
+export const unhandledEvent = 'unhandledEvent';
+
+export const unknownEvent = 'unknownEvent';
+
+export const error = 'error';
+
+export const launch = 'launch';
+
+export const end = 'end';
+
+
+/**
+* The builtin Amazon intents
+* Taken from: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/implementing-the-built-in-intents
+*/
 
 /**
  * Let the user cancel a transaction or task (but remain in the skill)
@@ -12,7 +26,7 @@
  *   never mind
  *   forget it
  */
-export const CANCEL = 'AMAZON.CancelIntent';
+export const cancel = 'AMAZON.CancelIntent';
 
 /**
  * Provide help about how to use the skill.
@@ -22,7 +36,7 @@ export const CANCEL = 'AMAZON.CancelIntent';
  *   help me
  *   can you help me
  */
-export const HELP = 'AMAZON.HelpIntent';
+export const help = 'AMAZON.HelpIntent';
 
 /**
  * Let the user provide a negative response to a yes/no question for confirmation.
@@ -31,7 +45,7 @@ export const HELP = 'AMAZON.HelpIntent';
  *   no
  *   no thanks
  */
-export const NO = 'AMAZON.NoIntent';
+export const no = 'AMAZON.NoIntent';
 
 /**
  * Let the user provide a positive response to a yes/no question for confirmation.
@@ -41,7 +55,7 @@ export const NO = 'AMAZON.NoIntent';
  *   yes please
  *   sure
  */
-export const YES = 'AMAZON.YesIntent';
+export const yes = 'AMAZON.YesIntent';
 
 /**
  * Let the user request to repeat the last action.
@@ -51,7 +65,7 @@ export const YES = 'AMAZON.YesIntent';
  *   say that again
  *   repeat that
  */
-export const REPEAT = 'AMAZON.RepeatIntent';
+export const repeat = 'AMAZON.RepeatIntent';
 
 /**
  * Let the user request to restart an action, such as restarting a game or a transaction.
@@ -61,7 +75,7 @@ export const REPEAT = 'AMAZON.RepeatIntent';
  *   restart
  *   start again
  */
-export const RESTART = 'AMAZON.StartOverIntent';
+export const restart = 'AMAZON.StartOverIntent';
 
 /**
  * Let the user stop an action (but remain in the skill)
@@ -72,4 +86,4 @@ export const RESTART = 'AMAZON.StartOverIntent';
  *   off
  *   shut up
  */
-export const STOP = 'AMAZON.StopIntent';
+export const stop = 'AMAZON.StopIntent';

@@ -23,7 +23,7 @@ describe('resolve(fn, ...args)', function() {
 
         const result = resolve(fn, req);
         expect(result).to.be.instanceOf(Promise);
-        return result.should.be.rejectedWith(err);
+        return result.should.be.rejected;
     })
 
     it('should resolve a resolved promise to a resolved promise', function() {

@@ -1,2 +1,2 @@
 export { Ability } from './Ability';
-export * as intent from './amazon-intents';
+export * as events from './standardEvents';

@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import debug from 'debug';
+import * as e from './standardEvents';
 
 const log = debug('alexa-ability:getEventName');
 
@@ -9,15 +10,15 @@ export function getEventName(event) {
 
     switch(type) {
         case "LaunchRequest":
-            return "launch";
+            return e.launch;
 
         case "IntentRequest":
             return get(event, 'request.intent.name');
 
         case "SessionEndedRequest":
-            return "end";
+            return e.end;
 
         default:
-            return "unhandledIntent";
+            return e.unknownEvent;
     }
 }
