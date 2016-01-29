@@ -52,7 +52,7 @@ describe('Request', function() {
             req.say(<speak />);
             expect(req.toJSON().response.outputSpeech).to.deep.equal({
                 type: "SSML",
-                text: "<speak></speak>\n"
+                ssml: "<speak></speak>\n"
             });
         });
     });
@@ -86,7 +86,7 @@ describe('Request', function() {
             req.reprompt(<speak />);
             expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
                 type: "SSML",
-                text: "<speak></speak>\n"
+                ssml: "<speak></speak>\n"
             });
         });
     });

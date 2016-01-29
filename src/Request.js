@@ -68,6 +68,6 @@ function toSpeechResponse(content) {
     const isTag = get(content, 'tag');
 
     return isTag ?
-        { type: "SSML", text: renderToString(content) } :
+        { type: "SSML", ssml: renderToString(content) } :
         { type: "PlainText", text: content } ;
 }
