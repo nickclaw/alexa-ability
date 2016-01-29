@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "sessionAttributes": {},
+  "response": {
+    "outputSpeech": {
+      "type": "PlainText",
+      "text": "foo"
+    },
+    "card": {
+      "type": "Simple",
+      "title": "Response",
+      "content": "foo"
+    },
+    "reprompt": {
+      "outputSpeech": {
+        "type": "SSML",
+        "text": "<speak>\n    foo\n</speak>\n"
+      }
+    },
+    "shouldEndSession": true
+  }
+}
