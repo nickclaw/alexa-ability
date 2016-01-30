@@ -18,7 +18,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "alexa-ssml": "^0.2.1",
+    "alexa-ssml": "^0.3.1",
     "bluebird": "^3.1.5",
     "debug": "^2.2.0",
     "lodash": "^4.0.1"

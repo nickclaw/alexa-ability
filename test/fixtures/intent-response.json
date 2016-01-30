@@ -14,7 +14,7 @@
     "reprompt": {
       "outputSpeech": {
         "type": "SSML",
-        "ssml": "<speak>\n    foo\n</speak>\n"
+        "ssml": "<speak>foo</speak>"
       }
     },
     "shouldEndSession": true
