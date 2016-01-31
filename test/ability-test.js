@@ -40,11 +40,13 @@ describe('Ability', function() {
 
     describe('"handle" function', function() {
         it('should return a promise', function() {
+            app.on(e.launch, function(){});
             const result = app.handle(launchRequest);
             expect(result).to.be.instanceOf(Promise);
         });
 
         it('should return a promise that resolves to a request when successful', function() {
+            app.on(e.launch, function(){});
             return app.handle(launchRequest).should.be.fulfilled
                 .then(req => expect(req).to.be.instanceOf(Request));
         });
@@ -52,6 +54,7 @@ describe('Ability', function() {
         it('should return a promise that rejects when middleware fails', function() {
             const err = new Error();
             app.use(function(){ throw err });
+            app.on(e.launch, function(){});
             return app.handle(launchRequest).should.be.rejected
                 .then(err => expect(err).to.equal(err));
         });
@@ -61,6 +64,7 @@ describe('Ability', function() {
             const spy = sinon.spy();
 
             app.use(function(){ throw err });
+            app.on(e.launch, function(){});
             app.on(e.error, spy);
 
             return app.handle(launchRequest)

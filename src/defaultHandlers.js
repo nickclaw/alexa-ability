@@ -11,10 +11,12 @@ const noErrHandlerWarning = once(() => console.warn('Warning: Unhandled error. A
 export const handlers = {
     [e.unhandledEvent]: function defaultEventHandler(req) {
         dLog('unhandled request', req);
+        throw new Error("No event handler found.");
     },
 
     [e.unknownEvent]: function unknownEventHandler(req) {
         uLog('unknown request', req);
+        throw new Error("Unknown request type.");
     },
 
     [e.error]: function defaultErrorHandler(err, req) {

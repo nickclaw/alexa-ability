@@ -19,6 +19,7 @@ describe('Ability middleware', function() {
     it('should be called with the request object', function() {
         const spy = sinon.spy();
         app.use(spy);
+        app.on('launch', function(){});
 
         return app.handle(launchRequest)
             .then(req => {
@@ -65,6 +66,7 @@ describe('Ability middleware', function() {
     it('should execute middleware even when no handler exists(?)', function() {
         const spy = sinon.spy();
         app.use(spy);
+        app.on('unhandledEvent', function(){});
         app.handle(launchRequest).then(function() {
             expect(spy).to.have.been.called;
         });
