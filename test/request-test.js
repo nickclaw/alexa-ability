@@ -1,6 +1,7 @@
 /** @jsx ssml */
 
 import { ssml } from 'alexa-ssml';
+import { EventEmitter } from 'events';
 import { Request } from '../src/Request';
 
 const intentRequest = require('./fixtures/intent-request');
@@ -16,6 +17,10 @@ describe('Request', function() {
     });
 
     describe('object', function() {
+
+        it('should be an EventEmitter', function() {
+            expect(req).to.be.instanceOf(EventEmitter);
+        });
 
         it('should have a "isNew" field', function() {
             expect(req.isNew).to.equal(intentRequest.session.new);
@@ -97,14 +102,36 @@ describe('Request', function() {
     });
 
     describe('"end" function', function() {
-        it('should chain', function() {
-            expect(req.end("foo")).to.equal(req);
+        it('should not chain', function() {
+            expect(req.end("foo")).to.be.undefined;
         });
 
-        it('should ', function() {
+        it('should end the session', function() {
             req.end();
             expect(req.toJSON().response.shouldEndSession).to.equal(true);
-        })
+        });
+
+        it('should emit the "finished" event', function() {
+            const spy = sinon.spy();
+            req.on('finished', spy);
+            expect(spy).to.not.have.been.called;
+            req.end();
+            expect(spy).to.have.been.called;
+        });
+    });
+
+    describe('"send" function', function() {
+        it('should not chain', function() {
+            expect(req.end("foo")).to.be.undefined;
+        });
+
+        it('should emit the "finished" event', function() {
+            const spy = sinon.spy();
+            req.on('finished', spy);
+            expect(spy).to.not.have.been.called;
+            req.end();
+            expect(spy).to.have.been.called;
+        });
     });
 
     describe('"toJSON" function', function() {
