@@ -22,6 +22,10 @@ describe('Request', function() {
             expect(req).to.be.instanceOf(EventEmitter);
         });
 
+        it('should have a "sent" field', function() {
+            expect(req.sent).to.equal(false);
+        });
+
         it('should have a "isNew" field', function() {
             expect(req.isNew).to.equal(intentRequest.session.new);
         });
@@ -118,6 +122,12 @@ describe('Request', function() {
             req.end();
             expect(spy).to.have.been.called;
         });
+
+        it('should set the sent property to true', function() {
+            expect(req.sent).to.equal(false);
+            req.end();
+            expect(req.sent).to.equal(true);
+        });
     });
 
     describe('"send" function', function() {
@@ -131,6 +141,12 @@ describe('Request', function() {
             expect(spy).to.not.have.been.called;
             req.end();
             expect(spy).to.have.been.called;
+        });
+
+        it('should set the sent property to true', function() {
+            expect(req.sent).to.equal(false);
+            req.end();
+            expect(req.sent).to.equal(true);
         });
     });
 

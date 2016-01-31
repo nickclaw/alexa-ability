@@ -9,6 +9,7 @@ export class Request extends EventEmitter {
         super();
 
         this.raw = event;
+        this.sent = false;
         this.isNew = get(event, 'session.new', false);
         this.version = get(event, 'version', '1.0');
         this.session = get(event, 'session.session', {});
@@ -49,6 +50,7 @@ export class Request extends EventEmitter {
     }
 
     send() {
+        this.sent = true;
         this.emit('finished', this);
         // fine to return undefined
     }
