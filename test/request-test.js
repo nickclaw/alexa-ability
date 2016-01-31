@@ -57,14 +57,19 @@ describe('Request', function() {
         });
     });
 
-    describe.skip('"show" function', function() {
+    describe('"show" function', function() {
 
         it('should chain', function() {
             expect(req.show("foo")).to.equal(req);
         });
 
         it('should set the title and content of the card', function() {
-
+            req.show('foo', 'bar');
+            expect(req.toJSON().response.card).to.deep.equal({
+                type: "Simple",
+                title: 'foo',
+                content: 'bar'
+            });
         });
     });
 
@@ -105,7 +110,7 @@ describe('Request', function() {
     describe('"toJSON" function', function() {
 
         it('should work', function() {
-            req.say("foo").show("foo").reprompt(<speak>foo</speak>).end();
+            req.say("foo").show("foo", "bar").reprompt(<speak>foo</speak>).end();
             expect(req.toJSON()).to.deep.equal(intentResponse);
         });
     });

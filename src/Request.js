@@ -24,10 +24,10 @@ export class Request {
         return this;
     }
 
-    show(content) {
+    show(title, content) {
         this._res.card = {
             type: "Simple",
-            title: "Response",
+            title: title,
             content: content
         };
         return this;

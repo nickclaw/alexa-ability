@@ -10,8 +10,8 @@
     },
     "card": {
       "type": "Simple",
-      "title": "Response",
-      "content": "foo"
+      "title": "foo",
+      "content": "bar"
     },
     "reprompt": {
       "outputSpeech": {
