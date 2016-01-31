@@ -8,7 +8,7 @@ Create skills for the [Alexa Skills Kit](https://developer.amazon.com/public/sol
 /** @jsx ssml */
 
 import { Ability, events } from 'alexa-ability';
-import handle from 'alexa-ability-lambda-handler';
+import { handleAbility } from 'alexa-ability-lambda-handler';
 import { ssml } from 'alexa-ssml';
 
 const app = new Ability();
@@ -54,7 +54,7 @@ export const handler = handle(app);
 
 ##### `Ability.prototype.on(event, handler) -> ability`
 
-##### `Ability.prototype.handle() -> promise`
+##### `Ability.prototype.handle(object, callback) -> request`
 
 #### Request
 

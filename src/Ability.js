@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import debug from 'debug';
 import assert from 'assert';
 import { Request } from './Request';
@@ -36,7 +35,7 @@ export class Ability {
         return this;
     }
 
-    handle(event) {
+    handle(event, callback) {
         const type = getEventName(event);
         const req = new Request(event);
 
@@ -51,28 +50,32 @@ export class Ability {
 
         let index = 0;
         const stack = [].concat(this._middleware, handler);
+        req.on('finished', () => done());
+        next();
+        return req;
 
-        return Promise.fromNode(function(done) {
-            req.on('finished', req => done(null, req));
-            next();
-
-            function next(err) {
-                if (err) {
-                    hLog('executing error handler');
-                    resolve(errHandler, done, err, req);
-                    return;
-                }
-
-                const fn = stack[index++];
-                if (!fn) {
-                    hLog('executing default handler');
-                    resolve(defHandler, next, req);
-                    return;
-                }
-
-                hLog(`executing function <${fn.name || 'anonymous'}>`);
-                resolve(fn, next, req);
+        function next(err) {
+            if (err) {
+                hLog('executing error handler');
+                resolve(errHandler, done, err, req);
+                return;
             }
-        }).return(req);
+
+            const fn = stack[index++];
+            if (!fn) {
+                hLog('executing default handler');
+                resolve(defHandler, next, req);
+                return;
+            }
+
+            hLog(`executing function <${fn.name || 'anonymous'}>`);
+            resolve(fn, next, req);
+        }
+
+        function done(err) {
+            if (typeof callback === "function") {
+                callback(err, req);
+            }
+        }
     }
 }

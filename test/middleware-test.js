@@ -16,21 +16,22 @@ describe('Ability middleware', function() {
         expect(app._middleware.length).to.equal(1);
     });
 
-    it('should be called with the request object', function() {
+    it('should be called with the request object', function(done) {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
         app.on('launch', req => req.end());
 
-        return app.handle(launchRequest)
-            .then(req => {
-                expect(spy).to.have.been.called;
-                const arg = spy.args[0][0];
-                expect(arg).to.be.instanceOf(Request);
-                expect(arg).to.equal(req);
-            });
+        app.handle(launchRequest, function(err, req) {
+            if (err) return done(err);
+            expect(spy).to.have.been.called;
+            const arg = spy.args[0][0];
+            expect(arg).to.be.instanceOf(Request);
+            expect(arg).to.equal(req);
+            done();
+        });
     });
 
-    it('should call all middleware in order before handling a request', function() {
+    it('should call all middleware in order before handling a request', function(done) {
         const spyA = sinon.spy(function(req, done) {
             expect(spyB).to.not.have.been.called;
             expect(handler).to.not.have.been.called;
@@ -50,36 +51,42 @@ describe('Ability middleware', function() {
         app.use(spyA);
         app.use(spyB);
         app.on('launch', handler);
-        return app.handle(launchRequest);
+        app.handle(launchRequest, done);
     });
 
-    it('should halt execution on a failed middleware function', function() {
+    it('should halt execution on a failed middleware function', function(done) {
         const err = new Error();
         const handler = sinon.spy();
 
         app.use(function() { throw err; });
         app.on('launch', handler);
-        return app.handle(launchRequest).should.be.rejected
-            .then(err => {
-                expect(err).to.equal(err);
-                expect(handler).to.not.have.been.called;
-            });
-    });
-
-    it('should execute middleware even when no handler exists(?)', function() {
-        const spy = sinon.spy((req, done) => done());
-        app.use(spy);
-        app.on('unhandledEvent', req => req.end());
-        return app.handle(launchRequest).then(function() {
-            expect(spy).to.have.been.called;
+        app.handle(launchRequest, function(err, req) {
+            expect(err).to.equal(err);
+            expect(handler).to.not.have.been.called;
+            done();
         });
     });
 
-    it('should stop execution if middleware responds', function() {
+    it('should execute middleware even when no handler exists(?)', function(done) {
+        const spy = sinon.spy((req, done) => done());
+        app.use(spy);
+        app.on('unhandledEvent', req => req.end());
+        app.handle(launchRequest, function(err, req) {
+            if (err) return done(err);
+            expect(spy).to.have.been.called;
+            done();
+        });
+    });
+
+    it('should stop execution if middleware responds', function(done) {
         const spy = sinon.spy(req => req.end());
 
         app.use(req => req.end());
         app.on('launch', spy);
-        return app.handle(launchRequest).then(() => expect(spy).to.not.have.been.called)
+        app.handle(launchRequest, function(err, req) {
+            if (err) return done(err);
+            expect(spy).to.not.have.been.called
+            done();
+        });
     });
 });

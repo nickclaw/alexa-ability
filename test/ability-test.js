@@ -39,27 +39,33 @@ describe('Ability', function() {
     });
 
     describe('"handle" function', function() {
-        it('should return a promise', function() {
+        it('should return a request', function() {
             app.on(e.launch, function(req){ req.send() });
             const result = app.handle(launchRequest);
-            expect(result).to.be.instanceOf(Promise);
+            expect(result).to.be.instanceOf(Request);
         });
 
-        it('should return a promise that resolves to a request when successful', function() {
+        it('should call the callback with the request when successful', function(done) {
             app.on(e.launch, function(req){ req.send() });
-            return app.handle(launchRequest).should.be.fulfilled
-                .then(req => expect(req).to.be.instanceOf(Request));
+            app.handle(launchRequest, function(err, req) {
+                if (err) return done(err);
+                expect(req).to.be.instanceOf(Request)
+                done();
+            });
         });
 
-        it('should return a promise that rejects when middleware fails', function() {
+        it('should call the callback with the error when middleware fails', function(done) {
             const err = new Error();
             app.use(function(){ throw err });
             app.on(e.launch, function(req, done){ req.send() });
-            return app.handle(launchRequest).should.be.rejected
-                .then(err => expect(err).to.equal(err));
+            app.handle(launchRequest, function(err, req) {
+                expect(err).to.be.equal(err);
+                expect(req).to.be.instanceOf(Request);
+                done();
+            });
         });
 
-        it('should attempt the error handler when middleware fails', function() {
+        it('should attempt the error handler when middleware fails', function(done) {
             const err = new Error();
             const spy = sinon.spy((err, req) => req.end());
 
@@ -67,28 +73,37 @@ describe('Ability', function() {
             app.on(e.launch, function(req, done){ req.send() });
             app.on(e.error, spy);
 
-            return app.handle(launchRequest)
-                .then(() => expect(spy).to.have.been.called);
+            app.handle(launchRequest, function(err, req) {
+                if (err) return done(err);
+                expect(spy).to.have.been.called
+                done();
+            });
         });
 
-        it('should attempt the error handler when the handler fails', function() {
+        it('should attempt the error handler when the handler fails', function(done) {
             const err = new Error();
             const spy = sinon.spy((err, req) => req.end());
 
             app.on(e.launch, function(){ throw err });
             app.on(e.error, spy);
 
-            return app.handle(launchRequest)
-                .then(() => expect(spy).to.have.been.called);
+            app.handle(launchRequest, function(err, req) {
+                if (err) return done(err);
+                expect(spy).to.have.been.called
+                done();
+            });
         });
 
-        it('should use the "unknownEvent" handler for unknown events', function() {
+        it('should use the "unknownEvent" handler for unknown events', function(done) {
             const spy = sinon.spy((req) => req.end());
 
             app.on(e.unknownEvent, spy);
 
-            return app.handle(unknownRequest)
-                .then(() => expect(spy).to.have.been.called);
+            app.handle(unknownRequest, function(err, req) {
+                if (err) return done(err);
+                expect(spy).to.have.been.called
+                done();
+            });
         });
     });
 });
