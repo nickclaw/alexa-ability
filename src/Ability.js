@@ -3,10 +3,9 @@ import debug from 'debug';
 import assert from 'assert';
 import { Request } from './Request';
 import { getEventName } from './getEventName';
-import { resolve } from './resolve';
 import { handlers } from './defaultHandlers';
-import * as e from './standardEvents'
-
+import * as e from './standardEvents';
+import { resolve } from './resolve';
 
 const uLog = debug('alexa-ability:ability:use');
 const oLog = debug('alexa-ability:ability:on');
@@ -50,19 +49,30 @@ export class Ability {
         if (this._handlers[type]) hLog(`handling event: ${type}`);
         else hLog(`no handler found for event: "${type}".`);
 
-        // 1. run middleware
-        // 2. run handler
-        // 3. if error, try to catch
-        // 4. if success, resolve req
-        return Promise.resolve(this._middleware)
-            .tap(fns => hLog(`executing ${fns.length} middleware.`))
-            .each(fn => {
-                hLog(`executing middleware function: ${fn.name || '<unnamed function>'}`);
-                return resolve(fn, req)
-            })
-            .tap(() => hLog(`executing handler for event: ${type}`))
-            .then(() => resolve(handler, req))
-            .catch(err => resolve(errHandler, err, req))
-            .return(req);
+        let index = 0;
+        const stack = [].concat(this._middleware, handler);
+
+        return Promise.fromNode(function(done) {
+            req.on('finished', req => done(null, req));
+            next();
+
+            function next(err) {
+                if (err) {
+                    hLog('executing error handler');
+                    resolve(errHandler, done, err, req);
+                    return;
+                }
+
+                const fn = stack[index++];
+                if (!fn) {
+                    hLog('executing default handler');
+                    resolve(defHandler, next, req);
+                    return;
+                }
+
+                hLog(`executing function <${fn.name || 'anonymous'}>`);
+                resolve(fn, next, req);
+            }
+        }).return(req);
     }
 }

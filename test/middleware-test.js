@@ -17,9 +17,9 @@ describe('Ability middleware', function() {
     });
 
     it('should be called with the request object', function() {
-        const spy = sinon.spy();
+        const spy = sinon.spy((req, done) => done());
         app.use(spy);
-        app.on('launch', function(){});
+        app.on('launch', req => req.end());
 
         return app.handle(launchRequest)
             .then(req => {
@@ -31,17 +31,20 @@ describe('Ability middleware', function() {
     });
 
     it('should call all middleware in order before handling a request', function() {
-        const spyA = sinon.spy(function(req) {
+        const spyA = sinon.spy(function(req, done) {
             expect(spyB).to.not.have.been.called;
             expect(handler).to.not.have.been.called;
+            done();
         });
-        const spyB = sinon.spy(function(req) {
+        const spyB = sinon.spy(function(req, done) {
             expect(spyA).to.have.been.called;
             expect(handler).to.not.have.been.called;
+            done();
         });
         const handler = sinon.spy(function(req) {
             expect(spyA).to.have.been.called;
             expect(spyB).to.have.been.called;
+            req.end();
         });
 
         app.use(spyA);
@@ -64,11 +67,19 @@ describe('Ability middleware', function() {
     });
 
     it('should execute middleware even when no handler exists(?)', function() {
-        const spy = sinon.spy();
+        const spy = sinon.spy((req, done) => done());
         app.use(spy);
-        app.on('unhandledEvent', function(){});
-        app.handle(launchRequest).then(function() {
+        app.on('unhandledEvent', req => req.end());
+        return app.handle(launchRequest).then(function() {
             expect(spy).to.have.been.called;
         });
+    });
+
+    it('should stop execution if middleware responds', function() {
+        const spy = sinon.spy(req => req.end());
+
+        app.use(req => req.end());
+        app.on('launch', spy);
+        return app.handle(launchRequest).then(() => expect(spy).to.not.have.been.called)
     });
 });

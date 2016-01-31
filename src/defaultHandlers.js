@@ -9,19 +9,19 @@ const eLog = debug('alexa-ability:defaultErrorHandler');
 const noErrHandlerWarning = once(() => console.warn('Warning: Unhandled error. Add an error handler.'));
 
 export const handlers = {
-    [e.unhandledEvent]: function defaultEventHandler(req) {
+    [e.unhandledEvent]: function defaultEventHandler(req, next) {
         dLog('unhandled request', req);
-        throw new Error("No event handler found.");
+        next(new Error("No event handler found."));
     },
 
-    [e.unknownEvent]: function unknownEventHandler(req) {
+    [e.unknownEvent]: function unknownEventHandler(req, next) {
         uLog('unknown request', req);
-        throw new Error("Unknown request type.");
+        next(new Error("Unknown request type."));
     },
 
-    [e.error]: function defaultErrorHandler(err, req) {
+    [e.error]: function defaultErrorHandler(err, req, next) {
         eLog('unhandled error', err);
         noErrHandlerWarning();
-        throw err;
+        next(err);
     }
 };
