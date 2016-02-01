@@ -15,7 +15,7 @@ export class Request extends EventEmitter {
         this.version = get(event, 'version', '1.0');
         this.session = get(event, 'session.attributes', {});
         this.user = get(event, 'session.user', {});
-        this.params = transform(
+        this.slots = this.params = transform(
             get(event, 'request.intent.slots'),
             (obj, slot) => obj[slot.name] = slot.value,
             {}

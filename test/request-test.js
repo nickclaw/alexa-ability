@@ -47,6 +47,10 @@ describe('Request', function() {
                 ZodiacSign: 'virgo'
             });
         });
+
+        it('should have a alias the "params" field to "slots"', function() {
+            expect(req.params).to.equal(req.slots);
+        });
     });
 
     describe('"say" function', function() {
