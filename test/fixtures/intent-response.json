@@ -1,7 +1,11 @@
 {
   "version": "1.0",
   "sessionAttributes": {
-    "session": {}
+    "supportedHoroscopePeriods": {
+      "daily": true,
+      "weekly": false,
+      "monthly": false
+    }
   },
   "response": {
     "outputSpeech": {

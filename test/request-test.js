@@ -35,11 +35,11 @@ describe('Request', function() {
         });
 
         it('should have a "session" field', function() {
-            expect(req.session).to.deep.equal({});
+            expect(req.session).to.deep.equal(intentRequest.session.attributes);
         });
 
         it('should have a "user" field', function() {
-            expect(req.user).to.deep.equal({});
+            expect(req.user).to.deep.equal(intentRequest.session.user);
         });
 
         it('should have a "params" field', function() {
