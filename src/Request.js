@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import omit from 'lodash/omit';
+import transform from 'lodash/transform';
 import { renderToString } from 'alexa-ssml';
 import { EventEmitter } from 'events';
 
@@ -13,7 +14,11 @@ export class Request extends EventEmitter {
         this.isNew = get(event, 'session.new', false);
         this.version = get(event, 'version', '1.0');
         this.session = get(event, 'session.session', {});
-        this.params = get(event, 'request.intent.slots', {});
+        this.params = transform(
+            get(event, 'request.intent.slots'),
+            (obj, slot) => obj[slot.name] = slot.value,
+            {}
+        );
 
         this._res = {
             outputSpeech: null,

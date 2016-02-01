@@ -39,7 +39,9 @@ describe('Request', function() {
         });
 
         it('should have a "params" field', function() {
-            expect(req.params).to.deep.equal(intentRequest.request.intent.slots);
+            expect(req.params).to.deep.equal({
+                ZodiacSign: 'virgo'
+            });
         });
     });
 
