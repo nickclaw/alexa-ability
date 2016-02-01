@@ -13,7 +13,8 @@ export class Request extends EventEmitter {
         this.sent = false;
         this.isNew = get(event, 'session.new', false);
         this.version = get(event, 'version', '1.0');
-        this.session = get(event, 'session.session', {});
+        this.session = get(event, 'session.attributes', {});
+        this.user = get(event, 'session.user', {});
         this.params = transform(
             get(event, 'request.intent.slots'),
             (obj, slot) => obj[slot.name] = slot.value,
@@ -66,7 +67,7 @@ export class Request extends EventEmitter {
         return {
             version: version,
             response: response,
-            sessionAttributes: { session }
+            sessionAttributes: session
         };
     }
 }

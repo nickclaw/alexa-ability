@@ -38,6 +38,10 @@ describe('Request', function() {
             expect(req.session).to.deep.equal({});
         });
 
+        it('should have a "user" field', function() {
+            expect(req.user).to.deep.equal({});
+        });
+
         it('should have a "params" field', function() {
             expect(req.params).to.deep.equal({
                 ZodiacSign: 'virgo'
