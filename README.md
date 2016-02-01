@@ -51,26 +51,96 @@ export const handler = handle(app);
 ##### `new Ability(options) -> ability`
 
 ##### `Ability.prototype.use(handler) -> ability`
+Add middleware to the ability. Middleware will be called in the order added. Each middleware function will be called with a request instance as the first argument and a "next" function that must be called when the middleware is finished.
+
+If the middleware
+
+```js
+function exampleMiddleware(req, next) {
+    isAllowed(function(err, isAllowed) {
+        if (err) return next(err); // pass along error
+        if (isAllowed) return next(); // do next middleware
+        req.say("I'm sorry, Dave. I'm afraid I can't do that.").end();
+    });
+}
+```
 
 ##### `Ability.prototype.on(event, handler) -> ability`
+Add an event handler to the ability. The handler function will be called with a request instance as the first argument and a "next" function that can be used to pass errors down.
 
-##### `Ability.prototype.handle(object, callback) -> request`
+##### `Ability.prototype.handle(event, callback) -> request`
+Handle an event, this function expects the JSON object from the Alexa request and a node style callback.
 
 #### Request
 
 ##### `new Request(event) -> request`
 
-##### `Request.prototype.say(text|ssml) -> request`
+##### `request.raw`
+The original event object passed to the ability.
 
-##### `Request.prototype.show(title, content) -> request`
+##### `request.sent`
+A boolean indicating whether this request has been sent.
 
-##### `Request.prototype.reprompt(text|ssml) -> request`
+##### `request.isNew`
+A boolean value indicating whether this is a new session. Returns true for a new session or false for an existing session.
 
-##### `Request.prototype.end() -> undefined`
+##### `request.version`
+The version specifier for the request with the value defined as: “1.0”
 
-##### `Request.prototype.send() -> undefined`
+##### `request.session`
+A map of key-value pairs. The attributes map is empty for requests where a new session has started with the attribute new set to true.
 
-##### `Request.prototype.toJSON() -> Object`
+Any changes to the session object will be persisted.
+
+##### `request.user`
+An object that describes the user making the request. A user is composed of:
+ * userId: A string that represents a unique identifier for the user who made the request. The length of this identifier can vary, but is never more than 255 characters.
+ * accessToken: a token identifying the user in another system. This is only provided if the user has successfully linked their account.
+
+##### `request.params` or `request.slots`
+An object of key value pairs. Where the keys are the slot names.
+
+For an intent like this:
+```json
+{
+  "name": "GetZodiacHoroscopeIntent",
+  "slots": {
+    "ZodiacSign": {
+      "name": "ZodiacSign",
+      "value": "virgo"
+    }
+  }
+}
+```
+
+The object will look like:
+```json
+{
+    "ZodiacSign": "virgo"
+}
+```
+
+##### `request.say(text|ssml) -> request`
+Indicate the speech to return to the user.
+
+##### `request.show(title, content) -> request`
+Indicate the title and content to display as a card on the Alexa app.
+
+##### `request.reprompt(text|ssml) -> request`
+Indicate the reprompt speech to say to the user.
+This will only be used if the your service keeps the session open after sending the response, but the user does not respond with anything that maps to an intent.
+
+If this is not set, the user is not re-prompted.
+
+##### `request.end() -> undefined`
+Indicate that the session should be ended by the response.
+This function will also send the response.
+
+##### `request.send() -> undefined`
+Send the response.
+
+##### `request.toJSON() -> Object`
+Get a properly formatted response JSON object.
 
 #### events
 
