@@ -1,16 +1,28 @@
 {
   "name": "alexa-ability",
   "version": "0.5.1",
-  "description": "",
+  "description": "An Alexa skills framework for node",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./scripts/test.sh"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nickclaw/alexa-ability"
   },
-  "keywords": [],
+  "bugs": {
+    "url": "http://github.com/nickclaw/alexa-ability/issues"
+  },
+  "keywords": [
+    "amazon",
+    "alexa",
+    "skills",
+    "skill",
+    "kit",
+    "echo",
+    "ability",
+    "ssml"
+  ],
   "author": {
     "name": "Nicholas Clawson",
     "email": "nickclaw@gmail.com",
