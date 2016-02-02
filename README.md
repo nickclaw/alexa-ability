@@ -37,7 +37,7 @@ ability.on('MeaningOfLifeIntent', function(req, next) {
 });
 
 
-ability.on(events.error', function(err, req, next) {
+ability.on(events.error, function(err, req, next) {
     req.say('Uhoh, something went wrong');
 });
 
