@@ -18,7 +18,7 @@ app.use(function(req, next) {
     next();
 });
 
-ability.on(events.LAUNCH, function(req) {
+ability.on(events.launch, function(req) {
     const speech = (
         <speak>
             Hello <pause time={100} /> world
@@ -37,11 +37,11 @@ ability.on('MeaningOfLifeIntent', function(req, next) {
 });
 
 
-ability.on('error', function(err, req, next) {
+ability.on(events.error', function(err, req, next) {
     req.say('Uhoh, something went wrong');
 });
 
-export const handler = handle(app);
+export const handler = handleAbility(ability);
 ```
 
 ### API
