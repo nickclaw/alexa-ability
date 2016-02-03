@@ -12,7 +12,7 @@ const hLog = debug('alexa-ability:ability:handle');
 
 export class Ability {
 
-    constructor(options = {}) {
+    constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._middleware = [];
         this._handlers = { ...handlers };
     }
@@ -38,6 +38,7 @@ export class Ability {
     handle(event, callback) {
         const type = getEventName(event);
         const req = new Request(event);
+        req.on('finished', () => done());
 
         // get possible handlers
         const errHandler = this._handlers[e.error];
@@ -50,8 +51,9 @@ export class Ability {
 
         let index = 0;
         const stack = [].concat(this._middleware, handler);
-        req.on('finished', () => done());
+
         next();
+
         return req;
 
         function next(err) {
@@ -73,7 +75,7 @@ export class Ability {
         }
 
         function done(err) {
-            if (typeof callback === "function") {
+            if (typeof callback === 'function') {
                 callback(err, req);
             }
         }

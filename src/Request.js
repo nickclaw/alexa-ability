@@ -1,5 +1,4 @@
 import get from 'lodash/get';
-import omit from 'lodash/omit';
 import transform from 'lodash/transform';
 import { renderToString } from 'alexa-ssml';
 import { EventEmitter } from 'events';
@@ -25,7 +24,7 @@ export class Request extends EventEmitter {
             outputSpeech: null,
             card: null,
             reprompt: null,
-            shouldEndSession: false
+            shouldEndSession: false,
         };
     }
 
@@ -36,16 +35,16 @@ export class Request extends EventEmitter {
 
     show(title, content) {
         this._res.card = {
-            type: "Simple",
-            title: title,
-            content: content
+            title,
+            content,
+            type: 'Simple',
         };
         return this;
     }
 
     reprompt(content) {
         this._res.reprompt = {
-            outputSpeech: toSpeechResponse(content)
+            outputSpeech: toSpeechResponse(content),
         };
         return this;
     }
@@ -65,9 +64,9 @@ export class Request extends EventEmitter {
         const { version, session, _res: response } = this;
 
         return {
-            version: version,
-            response: response,
-            sessionAttributes: session
+            version,
+            response,
+            sessionAttributes: session,
         };
     }
 }
@@ -76,6 +75,6 @@ function toSpeechResponse(content) {
     const isTag = get(content, 'tag');
 
     return isTag ?
-        { type: "SSML", ssml: renderToString(content) } :
-        { type: "PlainText", text: content } ;
+        { type: 'SSML', ssml: renderToString(content) } :
+        { type: 'PlainText', text: content };
 }

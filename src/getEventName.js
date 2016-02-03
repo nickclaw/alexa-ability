@@ -8,14 +8,14 @@ export function getEventName(event) {
     const type = get(event, 'request.type');
     log(`getting event name for request type: ${type}`);
 
-    switch(type) {
-        case "LaunchRequest":
+    switch (type) {
+        case 'LaunchRequest':
             return e.launch;
 
-        case "IntentRequest":
+        case 'IntentRequest':
             return get(event, 'request.intent.name');
 
-        case "SessionEndedRequest":
+        case 'SessionEndedRequest':
             return e.end;
 
         default:
