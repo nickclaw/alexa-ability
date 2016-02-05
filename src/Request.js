@@ -60,6 +60,11 @@ export class Request extends EventEmitter {
         // fine to return undefined
     }
 
+    fail(err) {
+        this.sent = true;
+        this.emit('failed', err, this);
+    }
+
     toJSON() {
         const { version, session, _res: response } = this;
 

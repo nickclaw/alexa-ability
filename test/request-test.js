@@ -160,6 +160,28 @@ describe('Request', function() {
         });
     });
 
+    describe('"fail" function', function() {
+        it('should not chain', function() {
+            expect(req.fail(new Error())).to.be.undefined;
+        });
+
+        it('should emit the "failed" event with error and request', function() {
+            const spy = sinon.spy();
+            const err = new Error();
+
+            req.on('failed', spy);
+            expect(spy).to.not.have.been.called;
+            req.fail(err);
+            expect(spy).to.have.been.calledWith(err, req);
+        });
+
+        it('should set the sent property to true', function() {
+            expect(req.sent).to.equal(false);
+            req.fail(new Error());
+            expect(req.sent).to.equal(true);
+        });
+    });
+
     describe('"toJSON" function', function() {
 
         it('should work', function() {

@@ -89,4 +89,17 @@ describe('Ability middleware', function() {
             done();
         });
     });
+
+    it('using "req.fail()" should immediately halt execution and fail', function() {
+        const spy = sinon.spy(req => req.end());
+        const err = new Error();
+
+        app.use(req => req.fail(err));
+        app.on('launch', spy);
+        app.handle(launchRequest, function(e, req) {
+            expect(spy).to.not.have.been.called;
+            expect(e).to.equal(err);
+            expect(req.sent).to.equal(true);
+        });
+    });
 });

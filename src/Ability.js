@@ -1,5 +1,6 @@
 import debug from 'debug';
 import assert from 'assert';
+import noop from 'lodash/noop';
 import { Request } from './Request';
 import { getEventName } from './getEventName';
 import { handlers } from './defaultHandlers';
@@ -35,10 +36,11 @@ export class Ability {
         return this;
     }
 
-    handle(event, callback) {
+    handle(event, callback = noop) {
         const type = getEventName(event);
         const req = new Request(event);
-        req.on('finished', () => done());
+        req.on('finished', () => callback(null, req));
+        req.on('failed', err => callback(err, req));
 
         // get possible handlers
         const errHandler = this._handlers[e.error];
@@ -65,8 +67,8 @@ export class Ability {
 
             const fn = stack[index++];
             if (!fn) {
-                hLog('executing default handler');
-                resolve(defHandler, next, req);
+                hLog('executing unhandledEvent handler');
+                resolve(defHandler, done, req);
                 return;
             }
 
@@ -74,9 +76,12 @@ export class Ability {
             resolve(fn, next, req);
         }
 
+        // if we ever reach this function then everything has failed
         function done(err) {
-            if (typeof callback === 'function') {
-                callback(err, req);
+            if (err) {
+                req.emit('failed', err);
+            } else {
+                req.emit('failed', new Error('Unhandled event.'));
             }
         }
     }

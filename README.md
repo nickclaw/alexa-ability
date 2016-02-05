@@ -80,6 +80,7 @@ The original event object passed to the ability.
 
 ##### `request.sent`
 A boolean indicating whether this request has been sent.
+This will be true after the use calls `end`, `send`, or `fail` on the request instance.
 
 ##### `request.isNew`
 A boolean value indicating whether this is a new session. Returns true for a new session or false for an existing session.
@@ -139,8 +140,12 @@ This function will also send the response.
 ##### `request.send() -> undefined`
 Send the response.
 
+##### `request.fail(err) -> undefined`
+Fail. Immediately halts execution of all middleware and handlers.
+Requests that are failed will skip the `"error"` handler completely. The argument passed to this function will be passed to the handling callback function.
+
 ##### `request.toJSON() -> Object`
-Get a properly formatted response JSON object.
+Get a properly formatted response JSON response.
 
 #### events
 
