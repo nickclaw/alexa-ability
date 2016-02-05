@@ -105,5 +105,38 @@ describe('Ability', function() {
                 done();
             });
         });
+
+        it('should not call more middleware or handlers after request has been sent', function(done) {
+            const spy = sinon.spy((req, next) => req.end());
+            app.use((req, next) => {
+                req.end();
+                next();
+            });
+            app.on('launch', spy);
+            app.handle(launchRequest, function(err, req) {
+                expect(err).to.be.falsy;
+                expect(spy).to.not.have.been.called;
+                done();
+            });
+        });
+
+        it('should should warn when "next" is called after request has been sent', function(done) {
+            const _oldWarn = console.warn;
+            console.warn = sinon.spy(_oldWarn);
+
+            app.use((req, next) => {
+                req.end();
+                next();
+            });
+            app.on('launch', req => req.end());
+            app.handle(launchRequest, function(err, req) {
+                process.nextTick(function() { // give it time for warning to happen
+                    expect(err).to.be.falsy;
+                    expect(console.warn).to.have.been.called;
+                    console.warn = _oldWarn;
+                    done();
+                });
+            });
+        });
     });
 });

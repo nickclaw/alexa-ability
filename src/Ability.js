@@ -10,6 +10,9 @@ import { resolve } from './resolve';
 const uLog = debug('alexa-ability:ability:use');
 const oLog = debug('alexa-ability:ability:on');
 const hLog = debug('alexa-ability:ability:handle');
+const warnSent = () => console.warn( // eslint-disable-line no-console
+    'Request already sent. Don\'t call "next" function after sending response.'
+);
 
 export class Ability {
 
@@ -59,6 +62,11 @@ export class Ability {
         return req;
 
         function next(err) {
+            if (req.sent) {
+                warnSent();
+                return;
+            }
+
             if (err) {
                 hLog('executing error handler');
                 resolve(errHandler, done, err, req);
@@ -78,11 +86,17 @@ export class Ability {
 
         // if we ever reach this function then everything has failed
         function done(err) {
+            if (req.sent) {
+                warnSent();
+                return;
+            }
+
             if (err) {
                 req.emit('failed', err);
-            } else {
-                req.emit('failed', new Error('Unhandled event.'));
+                return;
             }
+
+            req.emit('failed', new Error('Unhandled event.'));
         }
     }
 }
