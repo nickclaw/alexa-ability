@@ -11,7 +11,24 @@ describe('Ability', function() {
     let app = null;
 
     beforeEach(function() {
-        app = new Ability();
+        app = new Ability({
+            applicationId: launchRequest.session.application.applicationId
+        });
+    });
+
+    describe('"constructor"', function() {
+        it('should return an instanceof Ability', function() {
+            const ability = new Ability({ applicationId: "foo" });
+            expect(ability).to.be.instanceOf(Ability);
+        });
+
+        it('should warn if no applicationId is provided', function() {
+            const _oldWarn = console.warn;
+            console.warn = sinon.spy(_oldWarn);
+            const ability = new Ability();
+            expect(console.warn).to.have.been.called;
+            console.warn = _oldWarn;
+        });
     });
 
     describe('"use" function', function() {

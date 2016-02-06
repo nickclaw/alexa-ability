@@ -6,19 +6,34 @@ import { getEventName } from './getEventName';
 import { handlers } from './defaultHandlers';
 import * as e from './standardEvents';
 import { resolve } from './resolve';
+import { verifyApplication } from './verifyApplication';
 
+const cLog = debug('alexa-ability:ability:constructor');
 const uLog = debug('alexa-ability:ability:use');
 const oLog = debug('alexa-ability:ability:on');
 const hLog = debug('alexa-ability:ability:handle');
+
+const warnAppId = () => console.warn( // eslint-disable-line no-console
+    'No "applicationId" provided, request may come from unauthorized sources'
+);
+
 const warnSent = () => console.warn( // eslint-disable-line no-console
     'Request already sent. Don\'t call "next" function after sending response.'
 );
+
 
 export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._middleware = [];
         this._handlers = { ...handlers };
+
+        if (options.applicationId) {
+            cLog('adding verifyApplication middleware');
+            this.use(verifyApplication(options.applicationId));
+        } else {
+            warnAppId();
+        }
     }
 
     use(fn) {
