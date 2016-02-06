@@ -121,15 +121,19 @@ The object will look like:
 }
 ```
 
-##### `request.say(text|ssml) -> request`
-Indicate the speech to return to the user.
+##### `request.say([type, ] value) -> request`
+Indicate the speech to return to the user. Type can be `"text"` or `"ssml"`.
+If you omit the type argument, the value will be assumed to `"text"` if a string,
+or `"ssml"` if an [alexa-ssml](https://github.com/nickclaw/alexa-ssml) object.
 
 ##### `request.show(title, content) -> request`
 Indicate the title and content to display as a card on the Alexa app.
 
-##### `request.reprompt(text|ssml) -> request`
+##### `request.reprompt([type, ] value) -> request`
 Indicate the reprompt speech to say to the user.
-This will only be used if the your service keeps the session open after sending the response, but the user does not respond with anything that maps to an intent.
+This will only be used if the your service keeps the session open after sending the response, but the user does not respond with anything that maps to an intent. Type can be `"text"` or `"ssml"`.
+If you omit the type argument, the value will be assumed to `"text"` if a string,
+or `"ssml"` if an [alexa-ssml](https://github.com/nickclaw/alexa-ssml) object.
 
 If this is not set, the user is not re-prompted.
 

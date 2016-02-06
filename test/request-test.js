@@ -74,6 +74,20 @@ describe('Request', function() {
                 ssml: "<speak/>"
             });
         });
+
+        it('should accept an optional type argument', function() {
+            req.say('ssml', '<speak></speak>');
+            expect(req.toJSON().response.outputSpeech).to.deep.equal({
+                type: "SSML",
+                ssml: "<speak></speak>"
+            });
+
+            req.say('text', 'foobar');
+            expect(req.toJSON().response.outputSpeech).to.deep.equal({
+                type: "PlainText",
+                text: "foobar"
+            });
+        });
     });
 
     describe('"show" function', function() {
@@ -111,6 +125,20 @@ describe('Request', function() {
             expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
                 type: "SSML",
                 ssml: "<speak/>"
+            });
+        });
+
+        it('should accept an optional type argument', function() {
+            req.reprompt('ssml', '<speak></speak>');
+            expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
+                type: "SSML",
+                ssml: "<speak></speak>"
+            });
+
+            req.reprompt('text', 'foobar');
+            expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
+                type: "PlainText",
+                text: "foobar"
             });
         });
     });

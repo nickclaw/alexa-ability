@@ -28,8 +28,8 @@ export class Request extends EventEmitter {
         };
     }
 
-    say(content) {
-        this._res.outputSpeech = toSpeechResponse(content);
+    say(type, value) {
+        this._res.outputSpeech = toSpeechResponse(type, value);
         return this;
     }
 
@@ -42,9 +42,9 @@ export class Request extends EventEmitter {
         return this;
     }
 
-    reprompt(content) {
+    reprompt(type, value) {
         this._res.reprompt = {
-            outputSpeech: toSpeechResponse(content),
+            outputSpeech: toSpeechResponse(type, value),
         };
         return this;
     }
@@ -76,10 +76,12 @@ export class Request extends EventEmitter {
     }
 }
 
-function toSpeechResponse(content) {
-    const isTag = get(content, 'tag');
+function toSpeechResponse(_type, _content) {
+    const type = _content === undefined ? undefined : _type;
+    const content = _content === undefined ? _type : _content;
+    const isTag = !!get(content, 'tag');
 
-    return isTag ?
-        { type: 'SSML', ssml: renderToString(content) } :
+    return isTag || type === 'ssml' ?
+        { type: 'SSML', ssml: (isTag ? renderToString(content) : content) } :
         { type: 'PlainText', text: content };
 }
