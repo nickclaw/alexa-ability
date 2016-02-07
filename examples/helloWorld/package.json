@@ -1,0 +1,9 @@
+{
+  "name": "helloWorld",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "alexa-ability": "^0.6.1",
+    "alexa-ability-lambda-handler": "^0.3.1"
+  }
+}

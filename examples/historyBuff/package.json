@@ -1,0 +1,11 @@
+{
+  "name": "helloWorld",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "alexa-ability": "^0.6.1",
+    "alexa-ability-lambda-handler": "^0.3.1",
+    "alexa-ssml": "^0.3.1",
+    "superagent": "^1.7.2"
+  }
+}
