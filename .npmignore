@@ -1,5 +1,11 @@
+examples
 node_modules
-src
 scripts
-.gitignore
+src
+test
+
 .babelrc
+.eslintrc
+.gitignore
+.travis.yml
+CONTRIBUTING
