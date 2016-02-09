@@ -26,11 +26,8 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
 ### Simple Example
 
 ```js
-/** @jsx ssml */
-
 import { Ability, events } from 'alexa-ability';
 import { handleAbility } from 'alexa-ability-lambda-handler';
-import { ssml } from 'alexa-ssml';
 
 const app = new Ability({
     applicationId: 'my-application-id'
@@ -44,24 +41,24 @@ app.use(function(req, next) {
 
 // handle LaunchRequest
 ability.on(events.launch, function(req, next) {
-    const speech = (
+    const speech = (`
         <speak>
             Hello <pause time={100} /> world
         </speak>
-    );
+    `);
 
-    req.say(speech).show('Hello, world!');
+    req.say('ssml', speech).show('Hello, world!').send();
 });
 
 // handle SessionEndedRequest
 ability.on(events.end, function(req, next) {
     console.log(`Session ended because: ${req.reason}`);
-    req.send('Goodbye!');
+    req.say('Goodbye!').end();
 });
 
 // handle uncaught errors
 ability.onError(function(err, req, next) {
-    req.say('Uhoh, something went wrong');
+    req.say('Uhoh, something went wrong').end();
 });
 
 // handle intent
