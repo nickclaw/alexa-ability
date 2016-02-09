@@ -3,9 +3,7 @@ import { Ability } from '../src/Ability';
 import { Request } from '../src/Request';
 import * as e from '../src/standardEvents';
 
-const launchRequest = require('./fixtures/launch-request');
 const intentRequest = require('./fixtures/intent-request');
-const endRequest = require('./fixtures/session-ended-request');
 
 describe('Ability', function() {
 
@@ -25,7 +23,7 @@ describe('Ability', function() {
 
         it('should warn if no applicationId is provided', function() {
             const _oldWarn = console.warn;
-            console.warn = sinon.spy(_oldWarn);
+            console.warn = sinon.spy(() => null);
             const ability = new Ability();
             expect(console.warn).to.have.been.called;
             console.warn = _oldWarn;
@@ -47,43 +45,6 @@ describe('Ability', function() {
         });
     });
 
-    describe('"onLaunch" function', function() {
-        it('should be chainable', function() {
-            var result = app.onLaunch(function(){});
-            expect(result).to.equal(app);
-        });
-
-        it('should handle "LaunchRequest" requests', function(done) {
-            const spy = sinon.spy(req => res.send());
-            app.onLaunch(spy);
-            app.handle(launchRequest, function() {
-                expect(spy).to.be.called;
-                expect(spy.args[0][0]).to.be.instanceOf(Request);
-                expect(spy.args[0][1]).to.be.instanceOf(Function);
-                done();
-            });
-        });
-    });
-
-    describe('"onEnd" function', function() {
-        it('should be chainable', function() {
-            var result = app.onEnd(function(){});
-            expect(result).to.equal(app);
-        });
-
-        it('should handle "SessionEndedRequest" requests', function(done) {
-            const spy = sinon.spy(req => res.send());
-            app.onEnd(spy);
-            app.handle(endRequest, function() {
-                expect(spy).to.be.called;
-                expect(spy.args[0][0]).to.be.a("string");
-                expect(spy.args[0][1]).to.be.instanceOf(Request);
-                expect(spy.args[0][2]).to.be.instanceOf(Function);
-                done();
-            });
-        });
-    });
-
     describe('"onError" function', function() {
         it('should be chainable', function() {
             var result = app.onError(function(){});
@@ -96,7 +57,7 @@ describe('Ability', function() {
             app.onError(spy);
             app.use((req, next) => next(err));
 
-            app.handle(endRequest, function() {
+            app.handle(intentRequest, function() {
                 expect(spy).to.be.called;
                 expect(spy.args[0][0]).to.equal(err);
                 expect(spy.args[0][1]).to.be.instanceOf(Request);
@@ -192,7 +153,7 @@ describe('Ability', function() {
 
         it('should should warn when "next" is called after request has been sent', function(done) {
             const _oldWarn = console.warn;
-            console.warn = sinon.spy(_oldWarn);
+            console.warn = sinon.spy(() => null);
 
             app.use((req, next) => {
                 req.end();

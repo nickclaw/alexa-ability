@@ -22,7 +22,7 @@ app.use(function(req, next) {
 });
 
 // handle LaunchRequest
-ability.onLaunch(function(req, next) {
+ability.on(events.launch, function(req, next) {
     const speech = (
         <speak>
             Hello <pause time={100} /> world
@@ -33,7 +33,8 @@ ability.onLaunch(function(req, next) {
 });
 
 // handle SessionEndedRequest
-ability.onEnd(function(reason, req, next) {
+ability.on(events.end, function(req, next) {
+    console.log(`Session ended because: ${req.reason}`);
     req.send('Goodbye!');
 });
 
@@ -81,17 +82,6 @@ function exampleMiddleware(req, next) {
 ##### `Ability.prototype.on(intent, handler) -> ability`
 Add an intent handler to the ability. The handler function will be called with a request instance as the first argument and a "next" function that can be used to pass errors down.
 
-##### `Ability.prototype.onLaunch(handler) -> ability`
-Add a launch handler to the ability. All Alexa skills are required to handle this type of request.
-The handler function will be called the request instance as the first argument and a "next" function that can be used to pass errors down.
-
-##### `Ability.prototype.onEnd(handler) -> ability`
-Add a session-ended handler to the ability. All Alexa skills are required to handle this type of request.
-
-This handler will be caused when a user's session ends,
-either because of an unknown error, the user stopped responding, or the user stopped the session manually.
-The handler function will be called the `reason`, `request`, and `next` function.
-
 ##### `Ability.prototype.onError(handler) -> ability`
 Add an error handler to the ability. This handler will be called with the error as the first argument, the request as the second, and the next function as the third.
 
@@ -111,6 +101,16 @@ This will be true after the use calls `end`, `send`, or `fail` on the request in
 
 ##### `request.isNew`
 A boolean value indicating whether this is a new session. Returns true for a new session or false for an existing session.
+
+##### `request.isEnding`
+A boolean value indicating whether this session is ending.
+Returns true if the event type is `SessionEndedRequest`.
+
+##### `request.reason`
+A string value if `request.isEnding` is `true`. Can be one of three reasons:
+ * `USER_INITIATED`: The user explicitly ended the session
+ * `ERROR`: An error occurred that caused the session to end
+ * `EXCEEDED_MAX_REPROMPTS`: The user either did not respond or responded with an utterance that did not match any of the intents defined in your voice interface.
 
 ##### `request.version`
 The version specifier for the request with the value defined as: “1.0”
@@ -182,6 +182,8 @@ Get a properly formatted response JSON response.
 
 ##### Internal Events
  * `events.unhandledEvent`: No event handler found
+ * `events.launch`: Corresponds to `LaunchRequest`
+ * `events.end`: Corresponds to `SessionEndedRequest`
 
 ##### Amazon Intents
  * `events.cancel = "AMAZON.CancelIntent"`

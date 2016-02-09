@@ -1,12 +1,12 @@
 import debug from 'debug';
 import assert from 'assert';
 import noop from 'lodash/noop';
-import get from 'lodash/get';
 import { Request } from './Request';
 import { defaultHandlers } from './defaultHandlers';
 import * as e from './standardEvents';
 import { resolve } from './resolve';
 import { verifyApplication } from './verifyApplication';
+import { getEventName } from './getEventName';
 
 const cLog = debug('alexa-ability:ability:constructor');
 const uLog = debug('alexa-ability:ability:use');
@@ -26,9 +26,7 @@ export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._middleware = [];
-        this._onLaunch = null;
         this._onError = defaultHandlers.errorHandler;
-        this._onEnd = null;
         this._handlers = {
             [e.unhandledEvent]: defaultHandlers.defaultHandler,
         };
@@ -60,18 +58,8 @@ export class Ability {
         return this;
     }
 
-    onLaunch(handler) {
-        this._onLaunch = handler;
-        return this;
-    }
-
     onError(handler) {
         this._onError = handler;
-        return this;
-    }
-
-    onEnd(handler) {
-        this._onEnd = handler;
         return this;
     }
 
@@ -79,27 +67,14 @@ export class Ability {
         // get possible handlers
         // it's fine if `handler` is null or undefined
         // it'll all be caught by the `unhandledEvent` handler
-        const type = get(event, 'request.type');
-        const reason = get(event, 'request.reason');
+        const eventName = getEventName(event);
         const errHandler = this._onError;
         const defHandler = this._handlers[e.unhandledEvent];
-        let handler = null;
-        switch (type) {
-            case 'LaunchRequest':
-                handler = this._onLaunch;
-                break;
-            case 'SessionEndedRequest':
-                // TODO don't wrap this handler
-                handler = (a, b) => this._onEnd(reason, a, b);
-                break;
-            default:
-                const intent = get(event, 'request.intent.name');
-                handler = this._handlers[intent];
-        }
+        const handler = eventName ? this._handlers[eventName] : null;
 
         // log
-        if (handler) hLog(`handling event: ${type}`);
-        else hLog(`no handler found for event: "${type}".`);
+        if (handler) hLog(`handling event: ${eventName}`);
+        else hLog(`no handler found for event: "${eventName}".`);
 
         // build request object and attach listeners
         const req = new Request(event);

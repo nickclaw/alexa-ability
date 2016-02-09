@@ -5,6 +5,7 @@ import { EventEmitter } from 'events';
 import { Request } from '../src/Request';
 
 const intentRequest = require('./fixtures/intent-request');
+const endRequest = require('./fixtures/session-ended-request');
 const intentResponse = require('./fixtures/intent-response');
 
 
@@ -28,6 +29,18 @@ describe('Request', function() {
 
         it('should have a "isNew" field', function() {
             expect(req.isNew).to.equal(intentRequest.session.new);
+        });
+
+        it('should have a "isEnding" field', function() {
+            expect(req.isEnding).to.equal(false);
+            req = new Request(endRequest);
+            expect(req.isEnding).to.equal(true);
+        });
+
+        it('should have a "reason" field', function() {
+            expect(req.reason).to.equal(null);
+            req = new Request(endRequest);
+            expect(req.reason).to.equal(endRequest.request.reason);
         });
 
         it('should have a "version" field', function() {

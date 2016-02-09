@@ -10,7 +10,10 @@ export class Request extends EventEmitter {
 
         this.raw = event;
         this.sent = false;
+
         this.isNew = get(event, 'session.new', false);
+        this.isEnding = !!get(event, 'request.reason');
+        this.reason = get(event, 'request.reason', null);
         this.version = get(event, 'version', '1.0');
         this.session = get(event, 'session.attributes', {});
         this.user = get(event, 'session.user', {});
