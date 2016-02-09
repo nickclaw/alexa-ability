@@ -43,6 +43,11 @@ describe('Ability', function() {
         it('should return the ability instance', function() {
             expect(app.use(noop)).to.equal(app);
         });
+
+        it('should accept multiple middleware', function() {
+            app.use(noop, noop, noop);
+            expect(app._middleware.length).to.equal(4);
+        });
     });
 
     describe('"onError" function', function() {

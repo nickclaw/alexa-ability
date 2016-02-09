@@ -30,7 +30,6 @@ export class Ability {
         this._onError = null;
         this._handlers = { };
 
-
         if (options.applicationId) {
             cLog('adding verifyApplication middleware');
             this.use(verifyApplication(options.applicationId));
@@ -39,11 +38,14 @@ export class Ability {
         }
     }
 
-    use(fn) {
-        assert(typeof fn === 'function', 'Expected function');
-        uLog(`adding middleware function: ${fn.name || '<unnamed function>'}`);
+    use(...fns) {
+        assert(fns.length, 'expected at least one middleware');
+        fns.forEach(fn => {
+            assert(typeof fn === 'function', 'Expected function, got %o', fn);
+            uLog(`adding middleware function: ${fn.name || '<unnamed function>'}`);
+        });
 
-        this._middleware.push(fn);
+        this._middleware.push(...fns);
         return this;
     }
 
@@ -54,11 +56,11 @@ export class Ability {
         assert(typeof event === 'string', 'Expected string for event type');
         assert(handlers.length, 'Expected at least one handler');
         handlers.forEach(handler => {
-            assert(typeof handler === 'function', 'Expected function for event handler');
+            assert(typeof handler === 'function', 'Expected handler function, got %o', handler);
         });
 
         oLog(`adding ${handlers.length} handlers to ${event} event`);
-        this._handlers[event] = [].concat(currentHandlers, handlers);
+        this._handlers[event] = [...currentHandlers, ...handlers];
         oLog(`current ${this._handlers[event].length} handlers for ${event} event`);
         return this;
     }
@@ -72,9 +74,10 @@ export class Ability {
         // get possible handlers
         // it's fine if `handler` is null or undefined
         // it'll all be caught by the `unhandledEvent` handler
-        const eventName = getEventName(event);
+        const middleware = this._middleware;
         const errHandler = this._onError || defaultHandlers.errorHandler;
         const defHandler = this._handlers[e.unhandledEvent] || defaultHandlers.defaultHandler;
+        const eventName = getEventName(event);
         const handler = eventName ? this._handlers[eventName] : null;
 
         // log
@@ -89,7 +92,7 @@ export class Ability {
         // iterate over the stack of middleware and handlers
         // kind of like express does
         let index = 0;
-        const stack = [].concat(this._middleware, handler, defHandler);
+        const stack = [].concat(middleware, handler, defHandler);
 
         // if we ever reach this function then everything has failed
         function done(err) {

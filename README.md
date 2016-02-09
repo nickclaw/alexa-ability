@@ -61,11 +61,10 @@ export const handler = handleAbility(ability);
 
 ##### `new Ability(options) -> ability`
 Create a new ability. The options object supports the following properties:
-
  * `applicationId` - Defaults to `undefined`, but if included, only allows requests that have a matching `applicationId`.
 
-##### `Ability.prototype.use(handler) -> ability`
-Add middleware to the ability. Middleware will be called in the order added. Each middleware function will be called with a request instance as the first argument and a "next" function that must be called when the middleware is finished.
+##### `Ability.prototype.use(...middleware) -> ability`
+Add middleware to the ability. Each middleware function will be called in the order added. They will be called with a request instance as the first argument and a "next" function that must be called when the middleware is finished.
 
 Example:
 ```js
