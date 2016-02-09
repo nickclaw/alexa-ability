@@ -19,6 +19,7 @@ export function getEventName(event) {
             return e.end;
 
         default:
+            log('weird event %o', event);
             return null;
     }
 }

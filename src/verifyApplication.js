@@ -1,6 +1,15 @@
 import get from 'lodash/get';
 import debug from 'debug';
 
+/**
+ * A simple alexa-ability middleware to verify
+ * that the requests applicationId matches the expected
+ * applicationId.
+ *
+ * Included with alexa-ability because it's required to
+ * get your skill past certified
+ */
+
 const log = debug('alexa-ability:verifyApplication');
 
 export function verifyApplication(id) {

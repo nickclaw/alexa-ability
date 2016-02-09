@@ -2,10 +2,25 @@
  * Internal events
  */
 
+/**
+ * For the rare case that the developer hasn't handled
+ * the request type
+ */
 export const unhandledEvent = 'unhandledEvent';
 
+/**
+ * When a user makes a request to an Alexa skill, but
+ * did not provide a specific intent
+ */
 export const launch = 'launch';
 
+/**
+ * A request made to an Alexa skill to notify that a
+ * session was ended. This can be because:
+ *   The user explicitly ended the session (USER_INITIATED)
+ *   An error occurred that caused the session to end (ERROR)
+ *   The user either did not respond or responded with an unknown utterance (EXCEEDED_MAX_REPROMPTS)
+ */
 export const end = 'end';
 
 /**

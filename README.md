@@ -67,8 +67,7 @@ Create a new ability. The options object supports the following properties:
 ##### `Ability.prototype.use(handler) -> ability`
 Add middleware to the ability. Middleware will be called in the order added. Each middleware function will be called with a request instance as the first argument and a "next" function that must be called when the middleware is finished.
 
-If the middleware
-
+Example:
 ```js
 function exampleMiddleware(req, next) {
     isAllowed(function(err, isAllowed) {
