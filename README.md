@@ -63,10 +63,10 @@ export const handler = handleAbility(ability);
 Create a new ability. The options object supports the following properties:
  * `applicationId` - Defaults to `undefined`, but if included, only allows requests that have a matching `applicationId`.
 
-##### `Ability.prototype.use(...middleware) -> ability`
+##### `ability.use(...middleware) -> ability`
 Add middleware to the ability. Each middleware function will be called in the order added. They will be called with a request instance as the first argument and a "next" function that must be called when the middleware is finished.
 
-Example:
+Example middleware:
 ```js
 function exampleMiddleware(req, next) {
     isAllowed(function(err, isAllowed) {
@@ -77,13 +77,13 @@ function exampleMiddleware(req, next) {
 }
 ```
 
-##### `Ability.prototype.on(intent, ...handlers) -> ability`
+##### `ability.on(intent, ...handlers) -> ability`
 Add an intent handler to the ability. The handler functions will be called with a request instance as the first argument and a "next" function to be called when the handler is done.
 
-##### `Ability.prototype.onError(handler) -> ability`
+##### `ability.onError(handler) -> ability`
 Add an error handler to the ability. This handler will be called with the error as the first argument, the request as the second, and the next function as the third.
 
-##### `Ability.prototype.handle(event, callback) -> request`
+##### `ability.handle(event, callback) -> request`
 Handle an event, this function expects the JSON object from the Alexa request and a node style callback.
 
 #### Request
