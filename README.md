@@ -1,8 +1,29 @@
 # alexa-ability [![Build Status](https://travis-ci.org/nickclaw/alexa-ability.svg?branch=master)](https://travis-ci.org/nickclaw/alexa-ability)
 
-Create skills for the [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit)
+An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit) framework for node.
 
-### Example
+### Features
+ * Asynchronous middleware and intent handlers
+ * Robust error handling
+ * Easy access to session and slots data
+ * Well tested
+ * Integrates well with any framework
+
+### Related packages
+ * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler)
+   * Expose abilities as AWS Lambda functions
+ * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler)
+   * Expose abilities as Express endpoints
+ * [alexa-ssml](https://npmjs.org/package/alexa-ssml)
+   * Manipulate and Validate SSML using the jsx syntax
+ * [alexa-utterances](https://npmjs.org/package/alexa-utterances)
+   * Easily generate an exhaustive list of utterances from a few template strings.
+ * [alexa-ability-user-store](https://github.com/nickclaw/alexa-user-store)
+   * The simplest way to persist user data across sessions.
+ * [node-lambda](https://www.npmjs.com/package/node-lambda)
+   * A command line interface to package and deploy lambda functions
+
+### Simple Example
 
 ```js
 /** @jsx ssml */
@@ -15,7 +36,7 @@ const app = new Ability({
     applicationId: 'my-application-id'
 });
 
-// runs first for every request
+// runs before for every request
 app.use(function(req, next) {
     logRequest(req);
     next();
