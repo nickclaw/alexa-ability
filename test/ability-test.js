@@ -79,6 +79,21 @@ describe('Ability', function() {
         it('should return the ability instance', function() {
             expect(app.use(noop)).to.equal(app);
         });
+
+        it('should accept multiple handlers', function(done) {
+            const spyA = sinon.spy((req, next) => next());
+            const spyB = sinon.spy((req, next) => next());
+            const spyC = sinon.spy((req, next) => req.end());
+            app.on('GetZodiacHoroscopeIntent', spyA, spyB, spyC);
+            expect(app._handlers['GetZodiacHoroscopeIntent'].length).to.equal(3);
+            app.handle(intentRequest, function(err) {
+                if (err) return done(err);
+                expect(spyA).to.be.called;
+                expect(spyB).to.be.called;
+                expect(spyC).to.be.called;
+                done();
+            });
+        });
     });
 
     describe('"handle" function', function() {

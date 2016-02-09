@@ -79,8 +79,8 @@ function exampleMiddleware(req, next) {
 }
 ```
 
-##### `Ability.prototype.on(intent, handler) -> ability`
-Add an intent handler to the ability. The handler function will be called with a request instance as the first argument and a "next" function that can be used to pass errors down.
+##### `Ability.prototype.on(intent, ...handlers) -> ability`
+Add an intent handler to the ability. The handler functions will be called with a request instance as the first argument and a "next" function to be called when the handler is done.
 
 ##### `Ability.prototype.onError(handler) -> ability`
 Add an error handler to the ability. This handler will be called with the error as the first argument, the request as the second, and the next function as the third.

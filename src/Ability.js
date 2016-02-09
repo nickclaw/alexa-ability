@@ -1,6 +1,7 @@
 import debug from 'debug';
 import assert from 'assert';
 import noop from 'lodash/noop';
+import flattenDeep from 'lodash/flattenDeep';
 import { Request } from './Request';
 import { defaultHandlers } from './defaultHandlers';
 import * as e from './standardEvents';
@@ -26,10 +27,8 @@ export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._middleware = [];
-        this._onError = defaultHandlers.errorHandler;
-        this._handlers = {
-            [e.unhandledEvent]: defaultHandlers.defaultHandler,
-        };
+        this._onError = null;
+        this._handlers = { };
 
 
         if (options.applicationId) {
@@ -48,13 +47,19 @@ export class Ability {
         return this;
     }
 
-    on(event, handler) {
-        assert(typeof event === 'string', 'Expected string for event type');
-        assert(typeof handler === 'function', 'Expected function for event handler');
-        if (this._handlers[event]) oLog(`overwrote handler for event: ${event}`);
-        else oLog(`added handler for event: ${event}`);
+    on(event, ..._handlers) {
+        const handlers = flattenDeep(_handlers);
+        const currentHandlers = this._handlers[event] || [];
 
-        this._handlers[event] = handler;
+        assert(typeof event === 'string', 'Expected string for event type');
+        assert(handlers.length, 'Expected at least one handler');
+        handlers.forEach(handler => {
+            assert(typeof handler === 'function', 'Expected function for event handler');
+        });
+
+        oLog(`adding ${handlers.length} handlers to ${event} event`);
+        this._handlers[event] = [].concat(currentHandlers, handlers);
+        oLog(`current ${this._handlers[event].length} handlers for ${event} event`);
         return this;
     }
 
@@ -68,8 +73,8 @@ export class Ability {
         // it's fine if `handler` is null or undefined
         // it'll all be caught by the `unhandledEvent` handler
         const eventName = getEventName(event);
-        const errHandler = this._onError;
-        const defHandler = this._handlers[e.unhandledEvent];
+        const errHandler = this._onError || defaultHandlers.errorHandler;
+        const defHandler = this._handlers[e.unhandledEvent] || defaultHandlers.defaultHandler;
         const handler = eventName ? this._handlers[eventName] : null;
 
         // log
@@ -84,7 +89,7 @@ export class Ability {
         // iterate over the stack of middleware and handlers
         // kind of like express does
         let index = 0;
-        const stack = [].concat(this._middleware, handler);
+        const stack = [].concat(this._middleware, handler, defHandler);
 
         // if we ever reach this function then everything has failed
         function done(err) {
@@ -118,13 +123,18 @@ export class Ability {
                 return;
             }
 
+            // no more handlers? fail
+            if (index >= stack.length) {
+                done();
+                return;
+            }
+
             const fn = stack[index++];
 
-            // no handler? try default handler once
-            if (!fn) {
-                hLog('executing unhandledEvent handler');
-                // TODO should this be catchable by the error handler?
-                resolve(defHandler, done, req);
+            // invalid handler? just skip it..
+            if (typeof fn !== 'function') {
+                hLog('invalid handler %s', fn);
+                next();
                 return;
             }
 

@@ -1,5 +1,6 @@
 import { Ability } from '../src/Ability';
 import { Request } from '../src/Request';
+import * as e from '../src/standardEvents';
 
 const intentRequest = require('./fixtures/intent-request');
 
@@ -72,7 +73,7 @@ describe('Ability middleware', function() {
     it('should execute middleware even when no handler exists(?)', function(done) {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
-        app.on('unhandledEvent', req => req.end());
+        app.on(e.unhandledEvent, req => req.end());
         app.handle(intentRequest, function(err, req) {
             if (err) return done(err);
             expect(spy).to.have.been.called;
