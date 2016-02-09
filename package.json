@@ -1,6 +1,6 @@
 {
   "name": "alexa-ability",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "An Alexa skills framework for node",
   "main": "lib/index.js",
   "scripts": {
