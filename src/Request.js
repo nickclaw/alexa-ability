@@ -45,6 +45,13 @@ export class Request extends EventEmitter {
         return this;
     }
 
+    linkAccount() {
+        this._res.card = {
+            type: 'LinkAccount',
+        };
+        return this;
+    }
+
     reprompt(type, value) {
         this._res.reprompt = {
             outputSpeech: toSpeechResponse(type, value),

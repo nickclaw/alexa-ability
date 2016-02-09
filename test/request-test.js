@@ -119,6 +119,19 @@ describe('Request', function() {
         });
     });
 
+    describe('"linkAccount" function', function() {
+        it('should chain', function() {
+            expect(req.linkAccount()).to.equal(req);
+        });
+
+        it('should set the card type to "LinkAccount"', function() {
+            req.linkAccount();
+            expect(req.toJSON().response.card).to.deep.equal({
+                type: "LinkAccount"
+            });
+        });
+    });
+
     describe('"reprompt" function', function() {
 
         it('should chain', function() {

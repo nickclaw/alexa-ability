@@ -154,6 +154,22 @@ or `"ssml"` if an [alexa-ssml](https://github.com/nickclaw/alexa-ssml) object.
 ##### `request.show(title, content) -> request`
 Indicate the title and content to display as a card on the Alexa app.
 
+#### `request.linkAccount() -> request`
+Show an card on the Alexa app that prompts the user to authorize with your application.
+In addition, you'll typically want to tell the user to check the Alexa app and close the session.
+
+Example:
+```js
+const message = 'Check the Alexa app to authorize your account.';
+app.use(function checkAccessTokenMiddleware(req, next) {
+    validateAccessToken(req.user.accessToken, function(err, isValid) {
+        if (err) return next(err); // unknown error, let error handler take over
+        if (!isValid) return req.say(message).linkAccount().end(); // needs to link account
+        next(); // valid, good to go
+    });
+})
+```
+
 ##### `request.reprompt([type, ] value) -> request`
 Indicate the reprompt speech to say to the user.
 This will only be used if the your service keeps the session open after sending the response, but the user does not respond with anything that maps to an intent. Type can be `"text"` or `"ssml"`.
