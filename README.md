@@ -15,12 +15,14 @@ const app = new Ability({
     applicationId: 'my-application-id'
 });
 
+// runs first for every request
 app.use(function(req, next) {
     logRequest(req);
     next();
 });
 
-ability.on(events.launch, function(req) {
+// handle LaunchRequest
+ability.onLaunch(function(req, next) {
     const speech = (
         <speak>
             Hello <pause time={100} /> world
@@ -30,7 +32,17 @@ ability.on(events.launch, function(req) {
     req.say(speech).show('Hello, world!');
 });
 
+// handle SessionEndedRequest
+ability.onEnd(function(reason, req, next) {
+    req.send('Goodbye!');
+});
 
+// handle uncaught errors
+ability.onError(function(err, req, next) {
+    req.say('Uhoh, something went wrong');
+});
+
+// handle intent
 ability.on('MeaningOfLifeIntent', function(req, next) {
     asyncRequest(function(err) {
         if (err) return next(err);
@@ -38,11 +50,7 @@ ability.on('MeaningOfLifeIntent', function(req, next) {
     });
 });
 
-
-ability.on(events.error, function(err, req, next) {
-    req.say('Uhoh, something went wrong');
-});
-
+// export as a lambda handler
 export const handler = handleAbility(ability);
 ```
 
@@ -70,8 +78,22 @@ function exampleMiddleware(req, next) {
 }
 ```
 
-##### `Ability.prototype.on(event, handler) -> ability`
-Add an event handler to the ability. The handler function will be called with a request instance as the first argument and a "next" function that can be used to pass errors down.
+##### `Ability.prototype.on(intent, handler) -> ability`
+Add an intent handler to the ability. The handler function will be called with a request instance as the first argument and a "next" function that can be used to pass errors down.
+
+##### `Ability.prototype.onLaunch(handler) -> ability`
+Add a launch handler to the ability. All Alexa skills are required to handle this type of request.
+The handler function will be called the request instance as the first argument and a "next" function that can be used to pass errors down.
+
+##### `Ability.prototype.onEnd(handler) -> ability`
+Add a session-ended handler to the ability. All Alexa skills are required to handle this type of request.
+
+This handler will be caused when a user's session ends,
+either because of an unknown error, the user stopped responding, or the user stopped the session manually.
+The handler function will be called the `reason`, `request`, and `next` function.
+
+##### `Ability.prototype.onError(handler) -> ability`
+Add an error handler to the ability. This handler will be called with the error as the first argument, the request as the second, and the next function as the third.
 
 ##### `Ability.prototype.handle(event, callback) -> request`
 Handle an event, this function expects the JSON object from the Alexa request and a node style callback.
@@ -158,12 +180,8 @@ Get a properly formatted response JSON response.
 
 #### events
 
-##### Default Events
+##### Internal Events
  * `events.unhandledEvent`: No event handler found
- * `events.unknownEvent`: Handle unknown request types
- * `events.error`: Handle all errors
- * `events.launch`: Corresponds to `LaunchRequest`
- * `events.end`: Corresponds to `SessionEndedRequest`
 
 ##### Amazon Intents
  * `events.cancel = "AMAZON.CancelIntent"`

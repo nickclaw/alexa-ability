@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 import transform from 'lodash/transform';
-import { renderToString } from 'alexa-ssml';
 import { EventEmitter } from 'events';
+import { toSpeechResponse } from './toSpeechResponse';
 
 export class Request extends EventEmitter {
 
@@ -74,14 +74,4 @@ export class Request extends EventEmitter {
             sessionAttributes: session,
         };
     }
-}
-
-function toSpeechResponse(_type, _content) {
-    const type = _content === undefined ? undefined : _type;
-    const content = _content === undefined ? _type : _content;
-    const isTag = !!get(content, 'tag');
-
-    return isTag || type === 'ssml' ?
-        { type: 'SSML', ssml: (isTag ? renderToString(content) : content) } :
-        { type: 'PlainText', text: content };
 }

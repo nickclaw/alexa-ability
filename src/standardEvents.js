@@ -4,15 +4,6 @@
 
 export const unhandledEvent = 'unhandledEvent';
 
-export const unknownEvent = 'unknownEvent';
-
-export const error = 'error';
-
-export const launch = 'launch';
-
-export const end = 'end';
-
-
 /**
 * The builtin Amazon intents
 * Taken from: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/implementing-the-built-in-intents

@@ -4,7 +4,8 @@ import { Request } from '../src/Request';
 import * as e from '../src/standardEvents';
 
 const launchRequest = require('./fixtures/launch-request');
-const unknownRequest = require('./fixtures/unknown-request');
+const intentRequest = require('./fixtures/intent-request');
+const endRequest = require('./fixtures/session-ended-request');
 
 describe('Ability', function() {
 
@@ -12,7 +13,7 @@ describe('Ability', function() {
 
     beforeEach(function() {
         app = new Ability({
-            applicationId: launchRequest.session.application.applicationId
+            applicationId: intentRequest.session.application.applicationId
         });
     });
 
@@ -29,6 +30,11 @@ describe('Ability', function() {
             expect(console.warn).to.have.been.called;
             console.warn = _oldWarn;
         });
+
+        it('should add verifyApplication middleare if application is provided', function() {
+            const ability = new Ability({ applicationId: 'foo' });
+            expect(ability._middleware.length).to.equal(1);
+        });
     });
 
     describe('"use" function', function() {
@@ -38,6 +44,65 @@ describe('Ability', function() {
 
         it('should return the ability instance', function() {
             expect(app.use(noop)).to.equal(app);
+        });
+    });
+
+    describe('"onLaunch" function', function() {
+        it('should be chainable', function() {
+            var result = app.onLaunch(function(){});
+            expect(result).to.equal(app);
+        });
+
+        it('should handle "LaunchRequest" requests', function(done) {
+            const spy = sinon.spy(req => res.send());
+            app.onLaunch(spy);
+            app.handle(launchRequest, function() {
+                expect(spy).to.be.called;
+                expect(spy.args[0][0]).to.be.instanceOf(Request);
+                expect(spy.args[0][1]).to.be.instanceOf(Function);
+                done();
+            });
+        });
+    });
+
+    describe('"onEnd" function', function() {
+        it('should be chainable', function() {
+            var result = app.onEnd(function(){});
+            expect(result).to.equal(app);
+        });
+
+        it('should handle "SessionEndedRequest" requests', function(done) {
+            const spy = sinon.spy(req => res.send());
+            app.onEnd(spy);
+            app.handle(endRequest, function() {
+                expect(spy).to.be.called;
+                expect(spy.args[0][0]).to.be.a("string");
+                expect(spy.args[0][1]).to.be.instanceOf(Request);
+                expect(spy.args[0][2]).to.be.instanceOf(Function);
+                done();
+            });
+        });
+    });
+
+    describe('"onError" function', function() {
+        it('should be chainable', function() {
+            var result = app.onError(function(){});
+            expect(result).to.equal(app);
+        });
+
+        it('should handle errors', function(done) {
+            const spy = sinon.spy((err, req) => res.send());
+            const err = new Error();
+            app.onError(spy);
+            app.use((req, next) => next(err));
+
+            app.handle(endRequest, function() {
+                expect(spy).to.be.called;
+                expect(spy.args[0][0]).to.equal(err);
+                expect(spy.args[0][1]).to.be.instanceOf(Request);
+                expect(spy.args[0][2]).to.be.instanceOf(Function);
+                done();
+            });
         });
     });
 
@@ -57,14 +122,14 @@ describe('Ability', function() {
 
     describe('"handle" function', function() {
         it('should return a request', function() {
-            app.on(e.launch, function(req){ req.send() });
-            const result = app.handle(launchRequest);
+            app.on("GetZodiacHoroscopeIntent", function(req){ req.send() });
+            const result = app.handle(intentRequest);
             expect(result).to.be.instanceOf(Request);
         });
 
         it('should call the callback with the request when successful', function(done) {
-            app.on(e.launch, function(req){ req.send() });
-            app.handle(launchRequest, function(err, req) {
+            app.on("GetZodiacHoroscopeIntent", function(req){ req.send() });
+            app.handle(intentRequest, function(err, req) {
                 if (err) return done(err);
                 expect(req).to.be.instanceOf(Request)
                 done();
@@ -74,8 +139,8 @@ describe('Ability', function() {
         it('should call the callback with the error when middleware fails', function(done) {
             const err = new Error();
             app.use(function(){ throw err });
-            app.on(e.launch, function(req, done){ req.send() });
-            app.handle(launchRequest, function(err, req) {
+            app.on("GetZodiacHoroscopeIntent", function(req, done){ req.send() });
+            app.handle(intentRequest, function(err, req) {
                 expect(err).to.be.equal(err);
                 expect(req).to.be.instanceOf(Request);
                 done();
@@ -87,10 +152,10 @@ describe('Ability', function() {
             const spy = sinon.spy((err, req) => req.end());
 
             app.use(function(){ throw err });
-            app.on(e.launch, function(req, done){ req.send() });
-            app.on(e.error, spy);
+            app.on("GetZodiacHoroscopeIntent", function(req, done){ req.send() });
+            app.onError(spy);
 
-            app.handle(launchRequest, function(err, req) {
+            app.handle(intentRequest, function(err, req) {
                 if (err) return done(err);
                 expect(spy).to.have.been.called
                 done();
@@ -101,22 +166,10 @@ describe('Ability', function() {
             const err = new Error();
             const spy = sinon.spy((err, req) => req.end());
 
-            app.on(e.launch, function(){ throw err });
-            app.on(e.error, spy);
+            app.on("GetZodiacHoroscopeIntent", function(){ throw err });
+            app.onError(spy);
 
-            app.handle(launchRequest, function(err, req) {
-                if (err) return done(err);
-                expect(spy).to.have.been.called
-                done();
-            });
-        });
-
-        it('should use the "unknownEvent" handler for unknown events', function(done) {
-            const spy = sinon.spy((req) => req.end());
-
-            app.on(e.unknownEvent, spy);
-
-            app.handle(unknownRequest, function(err, req) {
+            app.handle(intentRequest, function(err, req) {
                 if (err) return done(err);
                 expect(spy).to.have.been.called
                 done();
@@ -129,8 +182,8 @@ describe('Ability', function() {
                 req.end();
                 next();
             });
-            app.on('launch', spy);
-            app.handle(launchRequest, function(err, req) {
+            app.on("GetZodiacHoroscopeIntent", spy);
+            app.handle(intentRequest, function(err, req) {
                 expect(err).to.be.falsy;
                 expect(spy).to.not.have.been.called;
                 done();
@@ -145,8 +198,8 @@ describe('Ability', function() {
                 req.end();
                 next();
             });
-            app.on('launch', req => req.end());
-            app.handle(launchRequest, function(err, req) {
+            app.on("GetZodiacHoroscopeIntent", req => req.end());
+            app.handle(intentRequest, function(err, req) {
                 process.nextTick(function() { // give it time for warning to happen
                     expect(err).to.be.falsy;
                     expect(console.warn).to.have.been.called;

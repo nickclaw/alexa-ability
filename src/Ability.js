@@ -1,9 +1,9 @@
 import debug from 'debug';
 import assert from 'assert';
 import noop from 'lodash/noop';
+import get from 'lodash/get';
 import { Request } from './Request';
-import { getEventName } from './getEventName';
-import { handlers } from './defaultHandlers';
+import { defaultHandlers } from './defaultHandlers';
 import * as e from './standardEvents';
 import { resolve } from './resolve';
 import { verifyApplication } from './verifyApplication';
@@ -26,7 +26,13 @@ export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._middleware = [];
-        this._handlers = { ...handlers };
+        this._onLaunch = null;
+        this._onError = defaultHandlers.errorHandler;
+        this._onEnd = null;
+        this._handlers = {
+            [e.unhandledEvent]: defaultHandlers.defaultHandler,
+        };
+
 
         if (options.applicationId) {
             cLog('adding verifyApplication middleware');
@@ -54,64 +60,106 @@ export class Ability {
         return this;
     }
 
+    onLaunch(handler) {
+        this._onLaunch = handler;
+        return this;
+    }
+
+    onError(handler) {
+        this._onError = handler;
+        return this;
+    }
+
+    onEnd(handler) {
+        this._onEnd = handler;
+        return this;
+    }
+
     handle(event, callback = noop) {
-        const type = getEventName(event);
+        // get possible handlers
+        // it's fine if `handler` is null or undefined
+        // it'll all be caught by the `unhandledEvent` handler
+        const type = get(event, 'request.type');
+        const reason = get(event, 'request.reason');
+        const errHandler = this._onError;
+        const defHandler = this._handlers[e.unhandledEvent];
+        let handler = null;
+        switch (type) {
+            case 'LaunchRequest':
+                handler = this._onLaunch;
+                break;
+            case 'SessionEndedRequest':
+                // TODO don't wrap this handler
+                handler = (a, b) => this._onEnd(reason, a, b);
+                break;
+            default:
+                const intent = get(event, 'request.intent.name');
+                handler = this._handlers[intent];
+        }
+
+        // log
+        if (handler) hLog(`handling event: ${type}`);
+        else hLog(`no handler found for event: "${type}".`);
+
+        // build request object and attach listeners
         const req = new Request(event);
         req.on('finished', () => callback(null, req));
         req.on('failed', err => callback(err, req));
 
-        // get possible handlers
-        const errHandler = this._handlers[e.error];
-        const defHandler = this._handlers[e.unhandledEvent];
-        const handler = this._handlers[type] || defHandler;
-
-        // log
-        if (this._handlers[type]) hLog(`handling event: ${type}`);
-        else hLog(`no handler found for event: "${type}".`);
-
+        // iterate over the stack of middleware and handlers
+        // kind of like express does
         let index = 0;
         const stack = [].concat(this._middleware, handler);
 
-        next();
-
-        return req;
-
-        function next(err) {
+        // if we ever reach this function then everything has failed
+        function done(err) {
+            // halt execution early if response has been sent
             if (req.sent) {
                 warnSent();
                 return;
             }
 
+            // just fail
+            if (err) {
+                req.fail(err);
+                return;
+            }
+
+            req.fail(new Error('Unhandled event.'));
+        }
+
+        // this function gives up execution to the next handler
+        function next(err) {
+            // halt execution early if response has been sent
+            if (req.sent) {
+                warnSent();
+                return;
+            }
+
+            // uhoh, try error handler once
             if (err) {
                 hLog('executing error handler');
-                resolve(errHandler, done, err, req);
+                resolve(errHandler, done, err, req, done);
                 return;
             }
 
             const fn = stack[index++];
+
+            // no handler? try default handler once
             if (!fn) {
                 hLog('executing unhandledEvent handler');
+                // TODO should this be catchable by the error handler?
                 resolve(defHandler, done, req);
                 return;
             }
 
+            // all's well! try the handler
             hLog(`executing function <${fn.name || 'anonymous'}>`);
             resolve(fn, next, req);
         }
 
-        // if we ever reach this function then everything has failed
-        function done(err) {
-            if (req.sent) {
-                warnSent();
-                return;
-            }
-
-            if (err) {
-                req.emit('failed', err);
-                return;
-            }
-
-            req.emit('failed', new Error('Unhandled event.'));
-        }
+        // start execution
+        next();
+        return req;
     }
 }

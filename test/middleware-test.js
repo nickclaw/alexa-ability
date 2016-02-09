@@ -1,27 +1,29 @@
 import { Ability } from '../src/Ability';
 import { Request } from '../src/Request';
 
-const launchRequest = require('./fixtures/launch-request');
+const intentRequest = require('./fixtures/intent-request');
 
 describe('Ability middleware', function() {
 
     let app = null;
 
     beforeEach(function() {
-        app = new Ability();
+        app = new Ability({
+            applicationId: intentRequest.session.application.applicationId
+        });
     });
 
     it('should be possible to add middleware to an ability', function() {
         app.use(function(){ });
-        expect(app._middleware.length).to.equal(1);
+        expect(app._middleware.length).to.equal(2); // one is the verifyApplication middleware
     });
 
     it('should be called with the request object', function(done) {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
-        app.on('launch', req => req.end());
+        app.on("GetZodiacHoroscopeIntent", req => req.end());
 
-        app.handle(launchRequest, function(err, req) {
+        app.handle(intentRequest, function(err, req) {
             if (err) return done(err);
             expect(spy).to.have.been.called;
             const arg = spy.args[0][0];
@@ -50,8 +52,8 @@ describe('Ability middleware', function() {
 
         app.use(spyA);
         app.use(spyB);
-        app.on('launch', handler);
-        app.handle(launchRequest, done);
+        app.on("GetZodiacHoroscopeIntent", handler);
+        app.handle(intentRequest, done);
     });
 
     it('should halt execution on a failed middleware function', function(done) {
@@ -59,8 +61,8 @@ describe('Ability middleware', function() {
         const handler = sinon.spy();
 
         app.use(function() { throw err; });
-        app.on('launch', handler);
-        app.handle(launchRequest, function(err, req) {
+        app.on("GetZodiacHoroscopeIntent", handler);
+        app.handle(intentRequest, function(err, req) {
             expect(err).to.equal(err);
             expect(handler).to.not.have.been.called;
             done();
@@ -71,7 +73,7 @@ describe('Ability middleware', function() {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
         app.on('unhandledEvent', req => req.end());
-        app.handle(launchRequest, function(err, req) {
+        app.handle(intentRequest, function(err, req) {
             if (err) return done(err);
             expect(spy).to.have.been.called;
             done();
@@ -82,8 +84,8 @@ describe('Ability middleware', function() {
         const spy = sinon.spy(req => req.end());
 
         app.use(req => req.end());
-        app.on('launch', spy);
-        app.handle(launchRequest, function(err, req) {
+        app.on("GetZodiacHoroscopeIntent", spy);
+        app.handle(intentRequest, function(err, req) {
             if (err) return done(err);
             expect(spy).to.not.have.been.called
             done();
@@ -95,8 +97,8 @@ describe('Ability middleware', function() {
         const err = new Error();
 
         app.use(req => req.fail(err));
-        app.on('launch', spy);
-        app.handle(launchRequest, function(e, req) {
+        app.on("GetZodiacHoroscopeIntent", spy);
+        app.handle(intentRequest, function(e, req) {
             expect(spy).to.not.have.been.called;
             expect(e).to.equal(err);
             expect(req.sent).to.equal(true);
