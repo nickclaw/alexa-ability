@@ -1,6 +1,3 @@
-/** @jsx ssml */
-
-import { ssml } from 'alexa-ssml';
 import { EventEmitter } from 'events';
 import { Request } from '../src/Request';
 
@@ -80,14 +77,6 @@ describe('Request', function() {
             });
         });
 
-        it('should accept ssml', function() {
-            req.say(<speak />);
-            expect(req.toJSON().response.outputSpeech).to.deep.equal({
-                type: "SSML",
-                ssml: "<speak/>"
-            });
-        });
-
         it('should accept an optional type argument', function() {
             req.say('ssml', '<speak></speak>');
             expect(req.toJSON().response.outputSpeech).to.deep.equal({
@@ -143,14 +132,6 @@ describe('Request', function() {
             expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
                 type: "PlainText",
                 text: "foo"
-            });
-        });
-
-        it('should accept ssml', function() {
-            req.reprompt(<speak />);
-            expect(req.toJSON().response.reprompt.outputSpeech).to.deep.equal({
-                type: "SSML",
-                ssml: "<speak/>"
             });
         });
 
@@ -239,7 +220,7 @@ describe('Request', function() {
     describe('"toJSON" function', function() {
 
         it('should work', function() {
-            req.say("foo").show("foo", "bar").reprompt(<speak>foo</speak>).end();
+            req.say("foo").show("foo", "bar").reprompt('ssml', '<speak>foo</speak>').end();
             expect(req.toJSON()).to.deep.equal(intentResponse);
         });
     });
