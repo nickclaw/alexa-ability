@@ -38,7 +38,7 @@
 
 import { Ability, events } from 'alexa-ability';
 import { handleAbility } from 'alexa-ability-lambda-handler';
-import { ssml } from 'alexa-ssml';
+import { ssml, renderToString } from 'alexa-ssml';
 import superagent from 'superagent';
 
 
@@ -90,7 +90,7 @@ app.on(events.launch, function(req) {
     const cardTitle = "This Day in History";
     const cardOutput = "History Buff. What day do you want events for?";
     const repromptText = "With History Buff, you can get historical events for any day of the year.  For example, you could say today, or August thirtieth. Now, which day do you want?";
-    const speechText = (
+    const speechText = renderToString(
         <speak>
             <p>History buff</p>
             <p>What day do you want events for?</p>
@@ -99,7 +99,7 @@ app.on(events.launch, function(req) {
 
 
     req.show(cardTitle, cardOutput)
-        .say(speechText)
+        .say('ssml', speechText)
         .reprompt(repromptText)
         .send();
 });
@@ -137,7 +137,7 @@ app.on('GetFirstEventIntent', function(req, next) {
         // store number of events already displayed
         req.session.offset = events.length;
 
-        const speech = (
+        const speech = renderToString(
             <speak>
                 <p>For {month} {date.getDate()},</p>
                 {events.map(event => <p>{event}</p>)}
@@ -148,7 +148,7 @@ app.on('GetFirstEventIntent', function(req, next) {
         const title = `Events on ${month} ${date.getDate()}`;
         const content = events.join('. ') + '.';
 
-        req.say(speech)
+        req.say('ssml', speech)
             .reprompt(reprompt)
             .show(title, content)
             .send();
@@ -174,7 +174,7 @@ app.on('GetNextEventIntent', function(req) {
     // if there are no more events to share
     if (offset >= events.length) {
         const text = 'There are no more events for this date. Try another date by saying, get events for august thirtieth.';
-        const speech = (
+        const speech = renderToString(
             <speak>
                 There are no more events for this date. Try another date by saying
                 <pause time={300} />
@@ -182,7 +182,7 @@ app.on('GetNextEventIntent', function(req) {
             </speak>
         );
 
-        return req.say(speech)
+        return req.say('ssml', speech)
             .reprompt(repromptText)
             .show(cardTitle, text)
             .send();
@@ -191,7 +191,7 @@ app.on('GetNextEventIntent', function(req) {
     const showEvents = events.slice(offset, offset + paginationSize);
     req.session.offset += showEvents.length;
 
-    const speech = (
+    const speech = renderToString(
         <speak>
             <p>For {month} {date.getDate()},</p>
             {showEvents.map(event => <p>{event}</p>)}
@@ -200,7 +200,7 @@ app.on('GetNextEventIntent', function(req) {
     );
     const cardContent = showEvents.join('. ') + '.';
 
-    req.say(speech)
+    req.say('ssml', speech)
         .reprompt(repromptText)
         .show(cardTitle, cardContent)
         .send();
