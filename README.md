@@ -10,20 +10,15 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
  * Integrates well with any framework
 
 ### Related packages
- * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler)
-   * Expose abilities as AWS Lambda functions
- * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler)
-   * Expose abilities as Express endpoints
- * [alexa-ssml](https://npmjs.org/package/alexa-ssml)
-   * Manipulate and Validate SSML using the jsx syntax
- * [alexa-utterances](https://npmjs.org/package/alexa-utterances)
-   * Easily generate an exhaustive list of utterances from a few template strings.
- * [alexa-ability-user-store](https://github.com/nickclaw/alexa-user-store)
-   * The simplest way to persist user data across sessions.
- * [node-lambda](https://www.npmjs.com/package/node-lambda)
-   * A command line interface to package and deploy lambda functions
+ * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler) - Expose abilities as AWS Lambda functions
+ * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler) - Expose abilities as Express endpoints
+ * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
+ * [alexa-utterances](https://npmjs.org/package/alexa-utterances) - Easily generate an exhaustive list of utterances from a few template strings.
+ * [alexa-ability-user-store](https://github.com/nickclaw/alexa-ability-user-store) - Middleware to store long lasting user data very easily.
+ * [alexa-ability-timeout](https://github.com/nickclaw/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
+ * [node-lambda](https://www.npmjs.com/package/node-lambda) - A command line interface to package and deploy AWS Lambda functions
 
-### Simple Example
+### Example
 
 ```js
 import { Ability, events } from 'alexa-ability';
@@ -41,13 +36,15 @@ app.use(function(req, next) {
 
 // handle LaunchRequest
 ability.on(events.launch, function(req, next) {
+    const cardTitle = 'Greetings';
+    const cardContent = 'Hello world!';
     const speech = (`
         <speak>
             Hello <pause time={100} /> world
         </speak>
     `);
 
-    req.say('ssml', speech).show('Hello, world!').send();
+    req.show(cardTitle, cardContent).say('ssml', speech).send();
 });
 
 // handle SessionEndedRequest
