@@ -13,8 +13,8 @@ In addition to the documented methods, the `Request` class is an
  - [`show(title, content) -> request`](#showtitle-content---request)
  - [`linkAccount() -> request`](#linkaccount---request)
  - [`reprompt([type,] value) -> request`](#reprompttype-value)
- - [`tell() or end() -> undefined`](#tell--end---undefined)
- - [`ask() or send() -> undefined`](#ask--send---undefined)
+ - [`tell() or end() -> undefined`](#tell-or-end---undefined)
+ - [`ask() or send() -> undefined`](#ask-or-send---undefined)
  - [`fail(error) -> undefined`](#failerror---undefined)
  - [`toJSON() -> object`](#tojson---object)
 
