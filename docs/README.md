@@ -1,0 +1,22 @@
+# Documentation
+
+ - [Resources](Resources.md)
+ - [`Ability`](docs/Ability.md)
+   - `constructor(options) -> ability`
+   - `use(...middleware) -> ability`
+   - `on(event, ...handlers) -> ability`
+   - `onError(handler) -> ability`
+   - `handle(data, callback) -> request`
+ - [`Request`](docs/Ability.md)
+   - `constructor(data) -> request`
+   - `properties`
+   - `events`
+   - `say([type,] value) -> request`
+   - `show(title, content) -> request`
+   - `linkAccount() -> request`
+   - `reprompt([type,] value) -> request`
+   - `end() -> undefined`
+   - `send() -> undefined`
+   - `fail(error) -> undefined`
+   - `toJSON() -> object`
+ - [`events`](docs/events.md)
