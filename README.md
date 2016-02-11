@@ -15,7 +15,7 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
  * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
  * [alexa-utterances](https://npmjs.org/package/alexa-utterances) - Easily generate an exhaustive list of utterances from a few template strings.
  * [alexa-ability-user-store](https://github.com/nickclaw/alexa-ability-user-store) - Middleware to store long lasting user data very easily.
- * [alexa-ability-timeout](https://github.com/nickclaw/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
+ * [alexa-ability-timeout](https://npmjs.org/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
  * [node-lambda](https://www.npmjs.com/package/node-lambda) - A command line interface to package and deploy AWS Lambda functions
 
 ### Example
@@ -24,17 +24,20 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
 import { Ability, events } from 'alexa-ability';
 import { handleAbility } from 'alexa-ability-lambda-handler';
 
+// create our skill
 const app = new Ability({
     applicationId: 'my-application-id'
 });
 
-// runs before for every request
+
+// add middleware function that run before every request
 app.use(function(req, next) {
     logRequest(req);
     next();
 });
 
-// handle LaunchRequest
+
+// handle LaunchRequest - "Alexa, launch MyApp"
 ability.on(events.launch, function(req, next) {
     const cardTitle = 'Greetings';
     const cardContent = 'Hello world!';
@@ -47,24 +50,28 @@ ability.on(events.launch, function(req, next) {
     req.show(cardTitle, cardContent).say('ssml', speech).send();
 });
 
-// handle SessionEndedRequest
+
+// handle SessionEndedRequest - "Alexa stop"
 ability.on(events.end, function(req, next) {
     console.log(`Session ended because: ${req.reason}`);
     req.say('Goodbye!').end();
 });
 
-// handle uncaught errors
+
+// gracefully handle any uncaught errors
 ability.onError(function(err, req, next) {
     req.say('Uhoh, something went wrong').end();
 });
 
-// handle intent
+
+// handle custom intents
 ability.on('MeaningOfLifeIntent', function(req, next) {
     asyncRequest(function(err) {
         if (err) return next(err);
         req.say('42').end();
     });
 });
+
 
 // export as a lambda handler
 export const handler = handleAbility(ability);
