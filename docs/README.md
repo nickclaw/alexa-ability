@@ -1,22 +1,22 @@
 # Documentation
 
  - [Resources](Resources.md)
- - [`Ability`](docs/Ability.md)
-   - `constructor(options) -> ability`
-   - `use(...middleware) -> ability`
-   - `on(event, ...handlers) -> ability`
-   - `onError(handler) -> ability`
-   - `handle(data, callback) -> request`
- - [`Request`](docs/Ability.md)
-   - `constructor(data) -> request`
-   - `properties`
-   - `events`
-   - `say([type,] value) -> request`
-   - `show(title, content) -> request`
-   - `linkAccount() -> request`
-   - `reprompt([type,] value) -> request`
-   - `end() -> undefined`
-   - `send() -> undefined`
-   - `fail(error) -> undefined`
-   - `toJSON() -> object`
- - [`events`](docs/events.md)
+ - [`Ability`](api/Ability.md)
+   - [`constructor(options) -> ability`](api/Ability.md#constructoroptions---ability)
+   - [`use(...middleware) -> ability`](api/Ability.md#usemiddleware---ability)
+   - [`on(event, ...handlers) -> ability`](api/Ability.md#onevent-handlers---ability)
+   - [`onError(handler) -> ability`](api/Ability.md#onerrorhandler---ability)
+   - [`handle(data, callback) -> request`](api/Ability.md#handledata-callback---request)
+ - [`Request`](api/Ability.md)
+   - [`constructor(data) -> request`](api/Ability.md#constructordata---request)
+   - [`properties`](api/Ability.md#properties)
+   - [`events`](api/Ability.md#events)
+   - [`say([type,] value) -> request`](api/Ability.md#saytype-value---request)
+   - [`show(title, content) -> request`](api/Ability.md#showtitle-content---request)
+   - [`linkAccount() -> request`](api/Ability.md#linkaccount---request)
+   - [`reprompt([type,] value) -> request`](api/Ability.md#reprompttype-value)
+   - [`end() -> undefined`](api/Ability.md#end---undefined)
+   - [`send() -> undefined`](api/Ability.md#send---undefined)
+   - [`fail(error) -> undefined`](api/Ability.md#failerror---undefined)
+   - [`toJSON() -> object`](api/Ability.md#tojson---object)
+ - [`events`](api/events.md)

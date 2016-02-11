@@ -5,11 +5,11 @@ that helps manage the middleware and intent handlers, as well as control
 the overall lifecycle of a request from Amazon.
 
 ### Reference
- - `constructor(options) -> ability`
- - `use(...middleware) -> ability`
- - `on(event, ...handlers) -> ability`
- - `onError(handler) -> ability`
- - `handle(data, callback) -> request`
+ - [`constructor(options) -> ability`](#constructoroptions---ability)
+ - [`use(...middleware) -> ability`](#usemiddleware---ability)
+ - [`on(event, ...handlers) -> ability`](#onevent-handlers---ability)
+ - [`onError(handler) -> ability`](#onerrorhandler---ability)
+ - [`handle(data, callback) -> request`](#handledata-callback---request)
 
 
 ### `constructor(options) -> ability`

@@ -1,6 +1,9 @@
 # alexa-ability [![Build Status](https://travis-ci.org/nickclaw/alexa-ability.svg?branch=master)](https://travis-ci.org/nickclaw/alexa-ability)
 
 An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit) framework for node.
+ - [Read the docs](api/)
+ - [View the examples](examples/)
+ - [Contribute!](CONTRIBUTING.md)
 
 ### Features
  * Asynchronous middleware and intent handlers
@@ -8,7 +11,6 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
  * Easy access to session and slots data
  * Well tested
  * Integrates well with any framework
- * Documented!
 
 ### Related packages
  * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler) - Expose abilities as AWS Lambda functions

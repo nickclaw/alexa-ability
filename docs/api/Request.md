@@ -6,17 +6,17 @@ In addition to the documented methods, the `Request` class is an
 `EventEmitter` and has all associated methods.
 
 ### Reference
- - `constructor(data) -> request`
- - `properties`
- - `events`
- - `say([type,] value) -> request`
- - `show(title, content) -> request`
- - `linkAccount() -> request`
- - `reprompt([type,] value) -> request`
- - `end() -> undefined`
- - `send() -> undefined`
- - `fail(error) -> undefined`
- - `toJSON() -> object`
+ - [`constructor(data) -> request`](#constructordata---request)
+ - [`properties`](#properties)
+ - [`events`](#events)
+ - [`say([type,] value) -> request`](#saytype-value---request)
+ - [`show(title, content) -> request`](#showtitle-content---request)
+ - [`linkAccount() -> request`](#linkaccount---request)
+ - [`reprompt([type,] value) -> request`](#reprompttype-value)
+ - [`end() -> undefined`](#end---undefined)
+ - [`send() -> undefined`](#send---undefined)
+ - [`fail(error) -> undefined`](#failerror---undefined)
+ - [`toJSON() -> object`](#tojson---object)
 
 
 ### `constructor(data) -> request`
