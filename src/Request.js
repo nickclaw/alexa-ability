@@ -85,3 +85,8 @@ export class Request extends EventEmitter {
         };
     }
 }
+
+// Setup some simple aliases
+// Eventually I'd like to use a decorator for this but the spec isn't totally ready
+Request.prototype.ask = Request.prototype.send;
+Request.prototype.tell = Request.prototype.end;

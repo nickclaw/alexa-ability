@@ -13,8 +13,8 @@ In addition to the documented methods, the `Request` class is an
  - [`show(title, content) -> request`](#showtitle-content---request)
  - [`linkAccount() -> request`](#linkaccount---request)
  - [`reprompt([type,] value) -> request`](#reprompttype-value)
- - [`end() -> undefined`](#end---undefined)
- - [`send() -> undefined`](#send---undefined)
+ - [`tell() or end() -> undefined`](#tell--end---undefined)
+ - [`ask() or send() -> undefined`](#ask--send---undefined)
  - [`fail(error) -> undefined`](#failerror---undefined)
  - [`toJSON() -> object`](#tojson---object)
 
@@ -114,10 +114,10 @@ Set the `reprompt.speechOutput` property on the response.
  - `type`: `'ssml'` or `'text'`, defaults to `'text'`
  - `value`: A string representing the plain text or ssml to send.
 
-### `end() -> undefined`
+### `tell() or end() -> undefined`
 Send the response, but indicate that the session has ended.
 
-### `send() -> undefined`
+### `ask() or send() -> undefined`
 Send the response, but indicate that the session has not ended.
 
 ### `fail(error) -> undefined`

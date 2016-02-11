@@ -61,6 +61,14 @@ describe('Request', function() {
         it('should have a alias the "params" field to "slots"', function() {
             expect(req.params).to.equal(req.slots);
         });
+
+        it('should alias "send" to "ask"', function() {
+            expect(req.send).to.equal(req.ask);
+        });
+
+        it('should alias "end" to "tell"', function() {
+            expect(req.end).to.equal(req.tell);
+        });
     });
 
     describe('"say" function', function() {
