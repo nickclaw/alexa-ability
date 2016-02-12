@@ -17,7 +17,6 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
  * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler) - Expose abilities as Express endpoints
  * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
  * [alexa-utterances](https://npmjs.org/package/alexa-utterances) - Easily generate an exhaustive list of utterances from a few template strings.
- * [alexa-ability-user-store](https://github.com/nickclaw/alexa-ability-user-store) - Middleware to store long lasting user data very easily.
  * [alexa-ability-timeout](https://npmjs.org/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
  * [node-lambda](https://www.npmjs.com/package/node-lambda) - A command line interface to package and deploy AWS Lambda functions
 
