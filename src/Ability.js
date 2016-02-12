@@ -86,8 +86,8 @@ export class Ability {
 
         // build request object and attach listeners
         const req = new Request(event);
-        req.on('finished', () => callback(null, req));
-        req.on('failed', err => callback(err, req));
+        req.on('finished', process.nextTick.bind(null, () => callback(null, req)));
+        req.on('failed', process.nextTick.bind(null, err => callback(err, req)));
 
         // iterate over the stack of middleware and handlers
         // kind of like express does

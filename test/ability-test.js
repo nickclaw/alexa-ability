@@ -189,5 +189,24 @@ describe('Ability', function() {
                 });
             });
         });
+
+        it('should be asynchronous even when request is ended synchronously', function(done) {
+            const finishedSpy = sinon.spy();
+            const handledSpy = sinon.spy();
+
+            app.use(req => {
+                req.on('finished', finishedSpy);
+                req.end();
+            });
+
+            app.handle(intentRequest, handledSpy);
+            expect(finishedSpy).to.be.called;
+            expect(handledSpy).to.not.be.called;
+
+            setTimeout(function() {
+                expect(handledSpy).to.be.called;
+                done();
+            })
+        });
     });
 });
