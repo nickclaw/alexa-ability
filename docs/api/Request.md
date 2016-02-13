@@ -27,6 +27,31 @@ the exact JSON body sent to the request by Amazon.
 A request instance has many properties that expose information about the
 original request:
 
+#### `handler`
+A string representing the event being handled. This can be useful for middleware
+that need to react differently when handling certain intents.
+
+If there was no handler for the given request, `req.handler` will equal `"unhandledEvent"`.
+
+##### example
+```js
+app.use(function(req, next) {
+    // we don't want to log peoples secrets
+    if (req.handler !== 'SaveSecretIntent') {
+        logRequest(req);
+    }
+    next();
+});
+
+app.on('SaveSecretIntent', function(req) {
+    saveToDatabase(req.slots.secret, function() {
+        req.say('Saved!').end();
+    });
+});
+
+// other handlers
+```
+
 #### `raw`
 The original event object passed to the ability.
 

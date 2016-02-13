@@ -1,7 +1,7 @@
 # alexa-ability [![Build Status](https://travis-ci.org/nickclaw/alexa-ability.svg?branch=master)](https://travis-ci.org/nickclaw/alexa-ability)
 
 An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit) framework for node.
- - [Read the docs](api/)
+ - [Read the docs](docs/)
  - [View the examples](examples/)
  - [Contribute!](CONTRIBUTING.md)
 

@@ -86,6 +86,7 @@ export class Ability {
 
         // build request object and attach listeners
         const req = new Request(event);
+        req.handler = handler ? eventName : e.unhandledEvent;
         req.on('finished', () => setImmediate(callback, null, req));
         req.on('failed', err => setImmediate(callback, err, req));
 

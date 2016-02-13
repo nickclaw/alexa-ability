@@ -69,6 +69,10 @@ describe('Request', function() {
         it('should alias "end" to "tell"', function() {
             expect(req.end).to.equal(req.tell);
         });
+
+        it('should have a "handler" property', function() {
+            expect(req.handler).to.equal(null);
+        });
     });
 
     describe('"say" function', function() {

@@ -108,6 +108,17 @@ describe('Ability', function() {
             expect(result).to.be.instanceOf(Request);
         });
 
+        it('should set the "handler" property on the request', function() {
+            app.on("GetZodiacHoroscopeIntent", function(req){ req.send() });
+            const result = app.handle(intentRequest);
+            expect(result.handler).to.equal("GetZodiacHoroscopeIntent");
+        });
+
+        it('should set the "handler" property to "unhandledEvent" on an unhandled request', function() {
+            const result = app.handle(intentRequest);
+            expect(result.handler).to.equal(e.unhandledEvent);
+        });
+
         it('should call the callback with the request when successful', function(done) {
             app.on("GetZodiacHoroscopeIntent", function(req){ req.send() });
             app.handle(intentRequest, function(err, req) {

@@ -8,15 +8,18 @@ export class Request extends EventEmitter {
     constructor(event) {
         super();
 
+        // metadata
         this.raw = event;
+        this.handler = null; // set by ability
         this.sent = false;
-
         this.isNew = get(event, 'session.new', false);
         this.isEnding = !!get(event, 'request.reason');
         this.reason = get(event, 'request.reason', null);
+
+        // request data
         this.version = get(event, 'version', '1.0');
-        this.session = get(event, 'session.attributes', {});
         this.user = get(event, 'session.user', {});
+        this.session = get(event, 'session.attributes', {});
         this.slots = this.params = transform(
             get(event, 'request.intent.slots'),
             (obj, slot) => obj[slot.name] = slot.value,
