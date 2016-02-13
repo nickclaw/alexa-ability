@@ -61,7 +61,7 @@ export class Ability {
 
         oLog(`adding ${handlers.length} handlers to ${event} event`);
         this._handlers[event] = [...currentHandlers, ...handlers];
-        oLog(`current ${this._handlers[event].length} handlers for ${event} event`);
+        oLog(`currently ${this._handlers[event].length} handlers for ${event} event`);
         return this;
     }
 
