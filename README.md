@@ -15,10 +15,10 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
 ### Related packages
  * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler) - Expose abilities as AWS Lambda functions
  * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler) - Expose abilities as Express endpoints
- * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
- * [alexa-utterances](https://npmjs.org/package/alexa-utterances) - Easily generate an exhaustive list of utterances from a few template strings.
  * [alexa-ability-timeout](https://npmjs.org/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
  * [alexa-ability-context](https://npmjs.org/alexa-ability-context) - Middleware to simplify building multistep conversations.
+ * [alexa-utterances](https://npmjs.org/package/alexa-utterances) - Easily generate an exhaustive list of utterances from a few template strings.
+ * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
  * [node-lambda](https://www.npmjs.com/package/node-lambda) - A command line interface to package and deploy AWS Lambda functions
 
 ### Example
