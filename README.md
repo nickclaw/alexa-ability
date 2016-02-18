@@ -46,7 +46,7 @@ ability.on(events.launch, function(req, next) {
     const cardContent = 'Hello world!';
     const speech = (`
         <speak>
-            Hello <pause time={100} /> world
+            Hello <break time="100ms" /> world
         </speak>
     `);
 
