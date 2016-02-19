@@ -35,13 +35,13 @@ const app = new Ability({
 
 // add middleware function that run before every request
 app.use(function(req, next) {
-    logRequest(req);
+    console.log('Handling:', req);
     next();
 });
 
 
 // handle LaunchRequest - "Alexa, launch MyApp"
-ability.on(events.launch, function(req, next) {
+app.on(events.launch, function(req, next) {
     const cardTitle = 'Greetings';
     const cardContent = 'Hello world!';
     const speech = (`
@@ -55,14 +55,14 @@ ability.on(events.launch, function(req, next) {
 
 
 // handle SessionEndedRequest - "Alexa stop"
-ability.on(events.end, function(req, next) {
+app.on(events.end, function(req, next) {
     console.log(`Session ended because: ${req.reason}`);
     req.say('Goodbye!').end();
 });
 
 
 // handle custom intents
-ability.on('MeaningOfLifeIntent', function(req, next) {
+app.on('MeaningOfLifeIntent', function(req, next) {
     asyncRequest(function(err) {
         if (err) return next(err);
         req.say('42').end();
@@ -71,17 +71,17 @@ ability.on('MeaningOfLifeIntent', function(req, next) {
 
 
 // catches any unhandled requests
-ability.use(function(req, next) {
+app.use(function(req, next) {
     req.say('I don\'t know what to say').end();
 });
 
 
 // gracefully handles any uncaught errors
-ability.use(function(err, req, next) {
+app.use(function(err, req, next) {
     req.say('Uhoh, something went wrong').end();
 });
 
 
 // export as a lambda handler
-export const handler = handleAbility(ability);
+export const handler = handleAbility(app);
 ```
