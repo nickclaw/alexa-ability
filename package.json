@@ -7,7 +7,7 @@
     "build": "rm -rf lib && babel src --out-dir lib",
     "lint": "eslint src",
     "pretest": "npm run lint",
-    "test": "mocha test --opts mocha.opts",
+    "test": "mocha test",
     "prepublish": "npm run test && npm run build",
     "publish:major": "npm version major && npm publish",
     "publish:minor": "npm version minor && npm publish",
