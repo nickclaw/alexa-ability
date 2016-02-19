@@ -4,5 +4,3 @@ node_js:
     - '0.12'
     - '4.2'
     - '5.5'
-install: 'npm install'
-script: './scripts/test.sh'
