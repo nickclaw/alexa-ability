@@ -50,17 +50,12 @@ describe('Ability', function() {
         });
     });
 
-    describe('"onError" function', function() {
-        it('should be chainable', function() {
-            var result = app.onError(function(){});
-            expect(result).to.equal(app);
-        });
-
+    describe('error handling', function() {
         it('should handle errors', function(done) {
-            const spy = sinon.spy((err, req) => res.send());
+            const spy = sinon.spy((err, req, next) => res.send());
             const err = new Error();
-            app.onError(spy);
             app.use((req, next) => next(err));
+            app.use(spy);
 
             app.handle(intentRequest, function() {
                 expect(spy).to.be.called;
@@ -136,11 +131,11 @@ describe('Ability', function() {
 
         it('should attempt the error handler when middleware fails', function(done) {
             const err = new Error();
-            const spy = sinon.spy((err, req) => req.end());
+            const spy = sinon.spy((err, req, next) => req.end());
 
             app.use(function(){ throw err });
             app.on("GetZodiacHoroscopeIntent", function(req, done){ req.send() });
-            app.onError(spy);
+            app.use(spy);
 
             app.handle(intentRequest, function(err, req) {
                 if (err) return done(err);
@@ -151,10 +146,10 @@ describe('Ability', function() {
 
         it('should attempt the error handler when the handler fails', function(done) {
             const err = new Error();
-            const spy = sinon.spy((err, req) => req.end());
+            const spy = sinon.spy((err, req, next) => req.end());
 
             app.on("GetZodiacHoroscopeIntent", function(){ throw err });
-            app.onError(spy);
+            app.use(spy);
 
             app.handle(intentRequest, function(err, req) {
                 if (err) return done(err);

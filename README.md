@@ -61,18 +61,24 @@ ability.on(events.end, function(req, next) {
 });
 
 
-// gracefully handle any uncaught errors
-ability.onError(function(err, req, next) {
-    req.say('Uhoh, something went wrong').end();
-});
-
-
 // handle custom intents
 ability.on('MeaningOfLifeIntent', function(req, next) {
     asyncRequest(function(err) {
         if (err) return next(err);
         req.say('42').end();
     });
+});
+
+
+// catches any unhandled requests
+ability.use(function(req, next) {
+    req.say('I don\'t know what to say').end();
+});
+
+
+// gracefully handles any uncaught errors
+ability.use(function(err, req, next) {
+    req.say('Uhoh, something went wrong').end();
 });
 
 

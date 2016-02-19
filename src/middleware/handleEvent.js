@@ -6,10 +6,13 @@
  * @param {Function} handler
  */
 export function handleEvent(event, handler) {
-    // return middleware function
-    return function eventHandler(req, next) {
-        return event === req.handler ?
-            handler(req, next) :
-            next();
-    };
+    const isMatch = req => req.handler === event;
+    const isErrorHandler = handler.length >= 3;
+
+    const fn = isErrorHandler ?
+        (err, req, next) => isMatch(req) ? handler(err, req, next) : next() :
+        (req, next) => isMatch(req) ? handler(req, next) : next();
+
+    fn.displayName = handler.name; // for debug statements
+    return fn;
 }

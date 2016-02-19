@@ -3,7 +3,6 @@ import assert from 'assert';
 import noop from 'lodash/noop';
 import flattenDeep from 'lodash/flattenDeep';
 import { Request } from './Request';
-import { defaultHandlers } from './defaultHandlers';
 import { resolve } from './resolve';
 import { verifyApplication } from './middleware/verifyApplication';
 import { handleEvent } from './middleware/handleEvent';
@@ -26,7 +25,6 @@ export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
         this._stack = [];
-        this._onError = null;
 
         if (options.applicationId) {
             cLog('adding verifyApplication middleware');
@@ -62,13 +60,7 @@ export class Ability {
         return this;
     }
 
-    onError(handler) {
-        this._onError = handler;
-        return this;
-    }
-
     handle(event, callback = noop) {
-        const errHandler = this._onError || defaultHandlers.errorHandler;
         const stack = [...this._stack];
         let index = 0;
 
@@ -102,31 +94,27 @@ export class Ability {
                 return;
             }
 
-            // uhoh, try error handler once
-            if (err) {
-                hLog('executing error handler');
-                resolve(errHandler, done, err, req, done);
-                return;
-            }
-
             // no more handlers? fail
             if (index >= stack.length) {
-                done();
+                done(err);
                 return;
             }
 
             const fn = stack[index++];
+            const fnName = fn.name || fn.displayName || 'anonymous';
 
-            // invalid handler? just skip it..
-            if (typeof fn !== 'function') {
-                hLog('invalid handler %s', fn);
-                next();
-                return;
+            if (fn.length >= 3 && err) {
+                hLog(`executing error handler: <${fnName}>`);
+                resolve(fn, next, err, req);
+            } else if (fn.length < 3 && !err) {
+                // all's well! try the handler
+                hLog(`executing handler: <${fnName}>`);
+                resolve(fn, next, req);
+            } else {
+                // not correct type of handler
+                hLog(`skipping handler: <${fnName}>`);
+                next(err);
             }
-
-            // all's well! try the handler
-            hLog(`executing function <${fn.name || 'anonymous'}>`);
-            resolve(fn, next, req);
         }
 
         // start execution

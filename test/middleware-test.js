@@ -34,7 +34,7 @@ describe('Ability middleware', function() {
         });
     });
 
-    it('should call all middleware in order before handling a request', function(done) {
+    it('should call middleware in order before handling a request', function(done) {
         const spyA = sinon.spy(function(req, done) {
             expect(spyB).to.not.have.been.called;
             expect(handler).to.not.have.been.called;
@@ -57,7 +57,7 @@ describe('Ability middleware', function() {
         app.handle(intentRequest, done);
     });
 
-    it('should halt execution on a failed middleware function', function(done) {
+    it('should not execute request handlers on an uncaught middleware function', function(done) {
         const err = new Error();
         const handler = sinon.spy();
 
@@ -70,7 +70,7 @@ describe('Ability middleware', function() {
         });
     });
 
-    it('should execute middleware even when no handler exists(?)', function(done) {
+    it('should execute middleware even when no handler exists', function(done) {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
         app.on(e.launch, req => req.end());
@@ -94,7 +94,7 @@ describe('Ability middleware', function() {
         });
     });
 
-    it('using "req.fail()" should immediately halt execution and fail', function() {
+    it('using "req.fail()" should immediately halt execution and fail', function(done) {
         const spy = sinon.spy(req => req.end());
         const err = new Error();
 
@@ -104,6 +104,20 @@ describe('Ability middleware', function() {
             expect(spy).to.not.have.been.called;
             expect(e).to.equal(err);
             expect(req.sent).to.equal(true);
+            done();
+        });
+    });
+
+    it('should skip error handlers when there is no error upstream', function(done) {
+        const spyA = sinon.spy((err, req, next) => next());
+        const spyB = sinon.spy((req, next) => next());
+
+        app.use(spyA);
+        app.use(spyB);
+        app.handle(intentRequest, function() {
+            expect(spyA).to.not.be.called;
+            expect(spyB).to.be.called;
+            done();
         });
     });
 });

@@ -21,33 +21,56 @@ only arguments. The current supported options are:
 
 
 ### `use(...handlers) -> ability`
-Add middleware functions to your ability that will be called for every request.
-Middleware functions will be called in the order added.
+Add a handler function to your ability. Handlers will be executed sequentially,
+therefore the order handlers are added is important.
 
-Each handler function must accept two arguments:
- - `req`: the request Object
- - `next`: a function to call when the middleware is finished or has failed. If
-    this function is called with an error as its first argument, the error handler
-    will immediately be called.
+A handler function can accept either 2 or 3 arguments.
+
+If the function accepts 2 (or less) arguments it will handle requests. The
+arguments are:
+- `req`: the request object
+- `next`: a function to call when the middleware is finished or has failed. If
+   this function is called with an error as its first argument, the error handler
+   will immediately be called.
+
+If the function accepts 3 arguments it will handle errors. The arguments are:
+- `err`: the error being handled
+- `req`: the request object
+- `next`: a function to call when the handler is finished or has failed. You'll
+  typically never need to use this.
+
 
 ##### Example
 ```js
 app.use(function(req, next) {
-    // we can do things asynchronously!
-    validateRequest(req, function(err, isValid) {
-        // let error handler handle any errors
-        if (err) return next(err);
-
-        // you can send responses from here
-        if (!isValid) {
-            res.say('Invalid.').end();
-            return; // just make sure not to call "next" if you do
-        }
-
-        // move on
-        next();
-    });
+    console.log('handle request 1');
+    next();
 });
+
+app.use(function(err, req, next) {
+    // there are no errors upstream, this error handler will be skipped
+    console.log('handle error 1');
+    next();
+});
+
+// uhoh, a wild error appeared
+app.use((req, next) => next(new Error()));
+
+app.use(function(req, next) {
+    // there's an error upstream, this request handler will be skipped
+    console.log('handle request 2');
+    next();
+});
+
+app.use(function(err, req, next) {
+    // upstream error! this function is called
+    console.log('handle error 2');
+    next();
+});
+
+// will output:
+//   handle request 1
+//   handle error 2
 ```
 
 
@@ -56,20 +79,13 @@ Add event handlers to your ability. This is simply a wrapper around `app.use()`,
 except the passed handlers will only be called when the handled event matches
 the given one.
 
-Each handler function must accept two arguments:
- - `req`: the request Object
- - `next`: a function to call when the handler is finished or has failed. If this
-   function is called with an error as its first argument, the error handler will
-   immediately be called.
+See `ability.use()` for possible arguments.
 
 ##### Example
 ```js
-// handler
-function handleIntent(req, next) {
+app.on('MyIntent', function(req, next) {
     req.say('Hello World!').end();
-}
-
-app.on('MyIntent', handleIntent);
+});
 
 // is equivalent to
 app.use((req, next) => {
@@ -80,19 +96,6 @@ app.use((req, next) => {
     }
 });
 ```
-
-
-### `onError(handler) -> ability`
-Add a general error handler to your ability. Calling this function multiple times
-will __replace__ the previously added error handler, not append it. Typically your
-error handler should be very simple, and gracefully tell the user that there was was
-a problem.
-
-Each error handling function must accept three arguments:
- - `err`: the error being handled
- - `req`: the request Object
- - `next`: a function to call when the handler is finished or has failed. You'll
-   typically never need to use this.
 
 
 ### `handle(data, callback) -> request`
