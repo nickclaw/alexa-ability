@@ -1,4 +1,4 @@
-import { verifyApplication } from '../src/verifyApplication';
+import { verifyApplication } from '../src/middleware/verifyApplication';
 import intentRequest from './fixtures/intent-request';
 
 const appId = intentRequest.session.application.applicationId;

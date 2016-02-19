@@ -2,6 +2,7 @@ import get from 'lodash/get';
 import transform from 'lodash/transform';
 import { EventEmitter } from 'events';
 import { toSpeechResponse } from './toSpeechResponse';
+import { getEventName } from './getEventName';
 
 export class Request extends EventEmitter {
 
@@ -10,7 +11,7 @@ export class Request extends EventEmitter {
 
         // metadata
         this.raw = event;
-        this.handler = null; // set by ability
+        this.handler = getEventName(event);
         this.sent = false;
         this.isNew = get(event, 'session.new', false);
         this.isEnding = !!get(event, 'request.reason');

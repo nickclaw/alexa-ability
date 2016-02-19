@@ -31,7 +31,7 @@ describe('Ability', function() {
 
         it('should add verifyApplication middleare if application is provided', function() {
             const ability = new Ability({ applicationId: 'foo' });
-            expect(ability._middleware.length).to.equal(1);
+            expect(ability._stack.length).to.equal(1);
         });
     });
 
@@ -46,7 +46,7 @@ describe('Ability', function() {
 
         it('should accept multiple middleware', function() {
             app.use(noop, noop, noop);
-            expect(app._middleware.length).to.equal(4);
+            expect(app._stack.length).to.equal(4); // +1 for verifyApp middleware
         });
     });
 
@@ -90,7 +90,7 @@ describe('Ability', function() {
             const spyB = sinon.spy((req, next) => next());
             const spyC = sinon.spy((req, next) => req.end());
             app.on('GetZodiacHoroscopeIntent', spyA, spyB, spyC);
-            expect(app._handlers['GetZodiacHoroscopeIntent'].length).to.equal(3);
+            expect(app._stack.length).to.equal(4); // +1 for verifyApp
             app.handle(intentRequest, function(err) {
                 if (err) return done(err);
                 expect(spyA).to.be.called;
@@ -112,11 +112,6 @@ describe('Ability', function() {
             app.on("GetZodiacHoroscopeIntent", function(req){ req.send() });
             const result = app.handle(intentRequest);
             expect(result.handler).to.equal("GetZodiacHoroscopeIntent");
-        });
-
-        it('should set the "handler" property to "unhandledEvent" on an unhandled request', function() {
-            const result = app.handle(intentRequest);
-            expect(result.handler).to.equal(e.unhandledEvent);
         });
 
         it('should call the callback with the request when successful', function(done) {

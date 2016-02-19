@@ -16,7 +16,7 @@ describe('Ability middleware', function() {
 
     it('should be possible to add middleware to an ability', function() {
         app.use(function(){ });
-        expect(app._middleware.length).to.equal(2); // one is the verifyApplication middleware
+        expect(app._stack.length).to.equal(2); // +1 for verifyApplication middleware
     });
 
     it('should be called with the request object', function(done) {
@@ -73,7 +73,8 @@ describe('Ability middleware', function() {
     it('should execute middleware even when no handler exists(?)', function(done) {
         const spy = sinon.spy((req, done) => done());
         app.use(spy);
-        app.on(e.unhandledEvent, req => req.end());
+        app.on(e.launch, req => req.end());
+        app.use(req => req.end());
         app.handle(intentRequest, function(err, req) {
             if (err) return done(err);
             expect(spy).to.have.been.called;

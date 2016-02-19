@@ -71,7 +71,7 @@ describe('Request', function() {
         });
 
         it('should have a "handler" property', function() {
-            expect(req.handler).to.equal(null);
+            expect(req.handler).to.equal("GetZodiacHoroscopeIntent");
         });
     });
 

@@ -4,10 +4,9 @@ import noop from 'lodash/noop';
 import flattenDeep from 'lodash/flattenDeep';
 import { Request } from './Request';
 import { defaultHandlers } from './defaultHandlers';
-import * as e from './standardEvents';
 import { resolve } from './resolve';
-import { verifyApplication } from './verifyApplication';
-import { getEventName } from './getEventName';
+import { verifyApplication } from './middleware/verifyApplication';
+import { handleEvent } from './middleware/handleEvent';
 
 const cLog = debug('alexa-ability:ability:constructor');
 const uLog = debug('alexa-ability:ability:use');
@@ -26,9 +25,8 @@ const warnSent = () => console.warn( // eslint-disable-line no-console
 export class Ability {
 
     constructor(options = {}) { // eslint-disable-line no-unused-vars
-        this._middleware = [];
+        this._stack = [];
         this._onError = null;
-        this._handlers = { };
 
         if (options.applicationId) {
             cLog('adding verifyApplication middleware');
@@ -45,13 +43,12 @@ export class Ability {
             uLog(`adding middleware function: ${fn.name || '<unnamed function>'}`);
         });
 
-        this._middleware.push(...fns);
+        this._stack.push(...fns);
         return this;
     }
 
     on(event, ..._handlers) {
         const handlers = flattenDeep(_handlers);
-        const currentHandlers = this._handlers[event] || [];
 
         assert(typeof event === 'string', 'Expected string for event type');
         assert(handlers.length, 'Expected at least one handler');
@@ -59,9 +56,9 @@ export class Ability {
             assert(typeof handler === 'function', 'Expected handler function, got %o', handler);
         });
 
-        oLog(`adding ${handlers.length} handlers to ${event} event`);
-        this._handlers[event] = [...currentHandlers, ...handlers];
-        oLog(`currently ${this._handlers[event].length} handlers for ${event} event`);
+        const fns = handlers.map(fn => handleEvent(event, fn));
+        oLog(`adding ${fns.length} handlers for ${event} event`);
+        this._stack.push(...fns);
         return this;
     }
 
@@ -71,29 +68,14 @@ export class Ability {
     }
 
     handle(event, callback = noop) {
-        // get possible handlers
-        // it's fine if `handler` is null or undefined
-        // it'll all be caught by the `unhandledEvent` handler
-        const middleware = this._middleware;
         const errHandler = this._onError || defaultHandlers.errorHandler;
-        const defHandler = this._handlers[e.unhandledEvent] || defaultHandlers.defaultHandler;
-        const eventName = getEventName(event);
-        const handler = eventName ? this._handlers[eventName] : null;
-
-        // log
-        if (handler) hLog(`handling event: ${eventName}`);
-        else hLog(`no handler found for event: "${eventName}".`);
+        const stack = [...this._stack];
+        let index = 0;
 
         // build request object and attach listeners
         const req = new Request(event);
-        req.handler = handler ? eventName : e.unhandledEvent;
         req.on('finished', () => setImmediate(callback, null, req));
         req.on('failed', err => setImmediate(callback, err, req));
-
-        // iterate over the stack of middleware and handlers
-        // kind of like express does
-        let index = 0;
-        const stack = [].concat(middleware, handler, defHandler);
 
         // if we ever reach this function then everything has failed
         function done(err) {

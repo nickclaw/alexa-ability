@@ -3,12 +3,6 @@
  */
 
 /**
- * For the rare case that the developer hasn't handled
- * the request type
- */
-export const unhandledEvent = 'unhandledEvent';
-
-/**
  * When a user makes a request to an Alexa skill, but
  * did not provide a specific intent
  */

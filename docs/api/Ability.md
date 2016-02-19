@@ -6,7 +6,7 @@ the overall lifecycle of a request from Amazon.
 
 ### Reference
  - [`constructor(options) -> ability`](#constructoroptions---ability)
- - [`use(...middleware) -> ability`](#usemiddleware---ability)
+ - [`use(...handlers) -> ability`](#usehandlers---ability)
  - [`on(event, ...handlers) -> ability`](#onevent-handlers---ability)
  - [`onError(handler) -> ability`](#onerrorhandler---ability)
  - [`handle(data, callback) -> request`](#handledata-callback---request)
@@ -20,12 +20,11 @@ only arguments. The current supported options are:
     is required to have your skill certified for the Alexa app store.
 
 
-### `use(...middleware) -> ability`
-Add middleware functions to your ability. Middleware is called one at a time
-in the order added before any event handler is called. Calling this function
-multiple times will __add__ middleware, not replace previously added middleware.
+### `use(...handlers) -> ability`
+Add middleware functions to your ability that will be called for every request.
+Middleware functions will be called in the order added.
 
-Each middleware function must accept two arguments:
+Each handler function must accept two arguments:
  - `req`: the request Object
  - `next`: a function to call when the middleware is finished or has failed. If
     this function is called with an error as its first argument, the error handler
@@ -53,9 +52,9 @@ app.use(function(req, next) {
 
 
 ### `on(event, ...handlers) -> ability`
-Add event handlers to your ability. You can also add event specific middleware
-this way. Calling this function multiple times will __add__ handlers, not replace
-previously added handlers.
+Add event handlers to your ability. This is simply a wrapper around `app.use()`,
+except the passed handlers will only be called when the handled event matches
+the given one.
 
 Each handler function must accept two arguments:
  - `req`: the request Object
@@ -65,19 +64,21 @@ Each handler function must accept two arguments:
 
 ##### Example
 ```js
-
-// intent specific middleware
-function logRequestMiddleware(req, next) {
-    console.log(req.raw);
-    next();
-}
-
 // handler
 function handleIntent(req, next) {
     req.say('Hello World!').end();
 }
 
-app.on('MyIntent', logRequestMiddleware, handleIntent);
+app.on('MyIntent', handleIntent);
+
+// is equivalent to
+app.use((req, next) => {
+    if (req.handler === 'MyIntent') {
+        req.say('Hello World!').end();
+    } else {
+        next();
+    }
+});
 ```
 
 
