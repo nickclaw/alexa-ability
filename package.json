@@ -4,7 +4,15 @@
   "description": "An Alexa skills framework for node",
   "main": "lib/index.js",
   "scripts": {
-    "test": "./scripts/test.sh"
+    "build": "rm -rf lib && babel src --out-dir lib",
+    "lint": "eslint src",
+    "pretest": "npm run lint",
+    "test": "mocha test --opts mocha.opts",
+    "prepublish": "npm run test && npm run build",
+    "publish:major": "npm version major && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:patch": "npm version patch && npm publish",
+    "postpublish": "git push origin master --tags"
   },
   "repository": {
     "type": "git",
