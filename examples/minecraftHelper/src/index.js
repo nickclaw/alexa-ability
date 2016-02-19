@@ -1,14 +1,4 @@
 /**
-    Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-        http://aws.amazon.com/apache2.0/
-
-    or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/**
  * This sample shows how to create a Lambda function for handling Alexa Skill requests that:
  *
  * - Custom slot type: demonstrates using custom slot types to handle a finite set of known values
@@ -18,8 +8,6 @@
  *  User: "Alexa, ask Minecraft Helper how to make paper."
  *  Alexa: "(reads back recipe for paper)"
  */
-
-'use strict';
 
 import { Ability, events } from 'alexa-ability';
 import { handleAbility } from 'alexa-ability-lambda-handler';
@@ -31,27 +19,26 @@ const app = new Ability({
     applicationId: APP_ID
 });
 
-
 //
-// Handle amazon events
+// Handle Amazon events
 //
 
-app.on(events.launch, function(req, next) {
+app.on(events.launch, function(req) {
     const speechText = "Welcome to the Minecraft Helper. You can ask a question like, what's the recipe for a chest? ... Now, what can I help you with.";
     const repromptText = "For instructions on what you can say, please say help me.";
 
     req.say(speechText).reprompt(repromptText).send();
 });
 
-app.on(events.stop, function(req, next) {
+app.on(events.stop, function(req) {
     req.say('Goodbye').send();
 });
 
-app.on(events.cancel, function(req, next) {
+app.on(events.cancel, function(req) {
     req.say('Goodbye').end();
 });
 
-app.on(events.help, function(req, next) {
+app.on(events.help, function(req) {
     const speechText = "You can ask questions about minecraft such as, what's the recipe for a chest, or, you can say exit... Now, what can I help you with?";
     const repromptText = "You can say things like, what's the recipe for a chest, or you can say exit... Now, what can I help you with?";
 
@@ -63,7 +50,7 @@ app.on(events.help, function(req, next) {
 // Handle our events
 //
 
-app.on('RecipeIntent', function(req, next) {
+app.on('RecipeIntent', function(req) {
     // try to get item
     const item = (req.slots.Item || "").toLowerCase();
     if (!item) {

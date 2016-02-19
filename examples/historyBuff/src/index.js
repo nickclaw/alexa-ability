@@ -1,14 +1,4 @@
 /**
-    Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-    Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-
-        http://aws.amazon.com/apache2.0/
-
-    or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/**
  * This sample shows how to create a Lambda function for handling Alexa Skill requests that:
  *
  * - Web service: communicate with an external web service to get events for specified days in history (Wikipedia API)
@@ -40,53 +30,22 @@ import { Ability, events } from 'alexa-ability';
 import { handleAbility } from 'alexa-ability-lambda-handler';
 import { ssml, renderToString } from 'alexa-ssml';
 import superagent from 'superagent';
+import { wikipedia } from './wikipedia';
 
 
-/**
-* App ID for the skill
-*/
 const APP_ID = undefined; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
-
-/**
- * URL prefix to download history content from Wikipedia
- */
 const urlPrefix = 'https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&explaintext=&exsectionformat=plain&redirects=&titles=';
-
-/**
- * Variable defining number of events to be read at one time
- */
 const paginationSize = 3;
-
-/**
- * Variable defining the length of the delimiter between events
- */
 const delimiterSize = 2;
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-/**
- * Array of month names
- */
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
+// create ability
 const app = new Ability({
     applicationId: APP_ID
 });
 
-app.use(function(req, res) {
-    if (req.isNew) {
-        console.log('HistoryBuffSkill session started');
-        // any initialization logic goes here
-    }
-    next();
-});
-
 
 app.on(events.launch, function(req) {
-    console.log('HistoryBuffSkill onLaunch called');
-
-    // If we wanted to initialize the session to have some attributes we could add those here.
     const cardTitle = "This Day in History";
     const cardOutput = "History Buff. What day do you want events for?";
     const repromptText = "With History Buff, you can get historical events for any day of the year.  For example, you could say today, or August thirtieth. Now, which day do you want?";
@@ -97,17 +56,10 @@ app.on(events.launch, function(req) {
         </speak>
     );
 
-
     req.show(cardTitle, cardOutput)
         .say('ssml', speechText)
         .reprompt(repromptText)
         .send();
-});
-
-
-app.on(events.end, function(req) {
-    console.log('HistoryBuffSkill SessionEnded');
-    // any cleanup logic goes here
 });
 
 
@@ -121,7 +73,6 @@ app.on('GetFirstEventIntent', function(req, next) {
         new Date();
 
     const month = monthNames(date.getMonth());
-
     getJsonEventsFromWikipedia(month, date.getDate(), function(err, events) {
         // if it failed, let error handler take care of it
         if (err) {
@@ -208,8 +159,7 @@ app.on('GetNextEventIntent', function(req) {
 
 
 app.on(events.help, function(req) {
-    const speechText = "With History Buff, you can get historical events for any day of the year.  " +
-        "For example, you could say today, or August thirtieth, or you can say exit. Now, which day do you want?";
+    const speechText = "With History Buff, you can get historical events for any day of the year. For example, you could say today, or August thirtieth, or you can say exit. Now, which day do you want?";
     const repromptText = "Which day do you want?";
 
     req.say(speechText).reprompt(repromptText).send();
@@ -225,49 +175,5 @@ app.on(events.cancel, function(req) {
     req.say('Goodbye').end();
 });
 
-
-
-function getJsonEventsFromWikipedia(day, date, eventCallback) {
-    var url = urlPrefix + day + '_' + date;
-
-    superagent.get(url).end(function(err, res) {
-        if (err) return done(err);
-        done(null, parseJSON(res.text));
-    });
-}
-
-// TODO refactor this terribleness
-function parseJson(inputText) {
-    // sizeOf (/nEvents/n) is 10
-    var text = inputText.substring(inputText.indexOf("\\nEvents\\n")+10, inputText.indexOf("\\n\\n\\nBirths")),
-        retArr = [],
-        retString = "",
-        endIndex,
-        startIndex = 0;
-
-    if (text.length == 0) {
-        return retArr;
-    }
-
-    while(true) {
-        endIndex = text.indexOf("\\n", startIndex+delimiterSize);
-        var eventText = (endIndex == -1 ? text.substring(startIndex) : text.substring(startIndex, endIndex));
-        // replace dashes returned in text from Wikipedia's API
-        eventText = eventText.replace(/\\u2013\s*/g, '');
-        // add comma after year so Alexa pauses before continuing with the sentence
-        eventText = eventText.replace(/(^\d+)/,'$1,');
-        eventText = 'In ' + eventText;
-        startIndex = endIndex+delimiterSize;
-        retArr.push(eventText);
-        if (endIndex == -1) {
-            break;
-        }
-    }
-    if (retString != "") {
-        retArr.push(retString);
-    }
-    retArr.reverse();
-    return retArr;
-}
 
 export const handler = handleAbility(app);
