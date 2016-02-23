@@ -3,14 +3,13 @@ import assert from 'assert';
 import noop from 'lodash/noop';
 import flattenDeep from 'lodash/flattenDeep';
 import { Request } from './Request';
-import { resolve } from './resolve';
 import { verifyApplication } from './middleware/verifyApplication';
 import { handleEvent } from './middleware/handleEvent';
+import { handleRequest } from './handleRequest';
 
 const cLog = debug('alexa-ability:ability:constructor');
 const uLog = debug('alexa-ability:ability:use');
 const oLog = debug('alexa-ability:ability:on');
-const hLog = debug('alexa-ability:ability:handle');
 
 const warnAppId = () => console.warn( // eslint-disable-line no-console
     'No "applicationId" provided, request may come from unauthorized sources'
@@ -61,9 +60,6 @@ export class Ability {
     }
 
     handle(event, callback = noop) {
-        const stack = [...this._stack];
-        let index = 0;
-
         // build request object and attach listeners
         const req = new Request(event);
         req.on('finished', () => setImmediate(callback, null, req));
@@ -86,39 +82,7 @@ export class Ability {
             req.fail(new Error('Unhandled event.'));
         }
 
-        // this function gives up execution to the next handler
-        function next(err) {
-            // halt execution early if response has been sent
-            if (req.sent) {
-                warnSent();
-                return;
-            }
-
-            // no more handlers? fail
-            if (index >= stack.length) {
-                done(err);
-                return;
-            }
-
-            const fn = stack[index++];
-            const fnName = fn.name || fn.displayName || 'anonymous';
-
-            if (fn.length >= 3 && err) {
-                hLog(`executing error handler: <${fnName}>`);
-                resolve(fn, next, err, req);
-            } else if (fn.length < 3 && !err) {
-                // all's well! try the handler
-                hLog(`executing handler: <${fnName}>`);
-                resolve(fn, next, req);
-            } else {
-                // not correct type of handler
-                hLog(`skipping handler: <${fnName}>`);
-                next(err);
-            }
-        }
-
-        // start execution
-        next();
+        handleRequest(req, this._stack, done);
         return req;
     }
 }

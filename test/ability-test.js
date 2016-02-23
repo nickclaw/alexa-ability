@@ -207,7 +207,7 @@ describe('Ability', function() {
             setTimeout(function() {
                 expect(handledSpy).to.be.called;
                 done();
-            })
+            }, 10);
         });
     });
 });
