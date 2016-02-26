@@ -2,6 +2,7 @@
 
 An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit) framework for node.
  - [Read the docs](docs/)
+ - [Try the interactive demo](https://tonicdev.com/nickclaw/alexa-ability-demo)
  - [View the examples](examples/)
  - [Contribute!](CONTRIBUTING.md)
 
