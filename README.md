@@ -16,6 +16,7 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
 ### Related packages
  * [alexa-ability-lambda-handler](https://npmjs.org/package/alexa-ability-lambda-handler) - Expose abilities as AWS Lambda functions
  * [alexa-ability-express-handler](https://npmjs.org/package/alexa-ability-express-handler) - Expose abilities as Express endpoints
+ * [alexa-ability-async-handler](https://npmjs.org/package/alexa-ability-async-handler) - Promise creating handler for abilities
  * [alexa-ability-timeout](https://npmjs.org/alexa-ability-timeout) - Middleware to prevent your skills from stalling.
  * [alexa-ability-context](https://npmjs.org/alexa-ability-context) - Middleware to simplify building multistep conversations.
  * [alexa-ability-stash](https://npmjs.org/alexa-ability-stash) - Middleware to easily persist user data (a lot like [express-session](https://npmjs.org/express-session)).
