@@ -24,7 +24,7 @@ An [Alexa Skills Kit](https://developer.amazon.com/public/solutions/alexa/alexa-
  * [alexa-ssml](https://npmjs.org/package/alexa-ssml) - Manipulate and validate SSML using the [jsx](https://facebook.github.io/react/docs/jsx-in-depth.html) syntax
  * [node-lambda](https://www.npmjs.com/package/node-lambda) - A command line interface to package and deploy AWS Lambda functions
 
-### Example
+### Example ([es5 version](examples/es5/index.js))
 
 ```js
 import { Ability, events } from 'alexa-ability';
