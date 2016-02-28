@@ -1,4 +1,6 @@
 var ab = require('alexa-ability');
+var Ability = ab.Ability;
+var events = ab.events;
 var handleAbility = require('alexa-ability-lambda-handler').handleAbility;
 
 
