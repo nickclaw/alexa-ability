@@ -21,10 +21,10 @@ export function verifyApplication(id) {
         // verify that applicationId is the same
         if (appId !== id) {
             log('invalid applicationId: %s (expected %s)', appId, id);
-            return req.fail(new Error('Invalid applicationId'));
+            req.fail(new Error('Invalid applicationId'));
+        } else {
+            log('applicationId matches');
+            next();
         }
-
-        log('applicationId matches');
-        next();
     };
 }
