@@ -122,16 +122,35 @@ Set the `speechOutput` property on the response.
  - `value`: A string representing the plain text or ssml to send.
 
 ### `show(title, content) -> request`
-Set the `cardOutput` property on the response. Cannot be used
-with the `linkAccount` method.
 
 ##### Arguments
  - `title`: The title of the card to display on the Alexa app
  - `content`: The content of the card to display on the Alexa app.
 
-### `linkAccount() -> request`
-Show a card on the Alexa app to link their account to your service. Cannot be used with the `show` method.
+Show a [Simple](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interface-reference#card-object) card.
 
+### `show(card) -> request`
+
+##### Arguments
+ - `card`: The card definition
+
+Show a [Standard](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interface-reference#card-object) card.
+
+##### Example
+```js
+req.show({
+    "title": "card title",
+    "content": "card content",
+    "text": "card text",
+    "image": {
+        "smallImageUrl": "/path/to/img-small.png",
+        "largeImageUrl": "/path/to/img-large.png"
+    }
+});
+```
+
+### `linkAccount() -> request`
+Show a [LinkAccount](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interface-reference#card-object) card.
 ### `reprompt([type,] value)`
 Set the `reprompt.speechOutput` property on the response.
 

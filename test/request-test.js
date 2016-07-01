@@ -110,12 +110,20 @@ describe('Request', function() {
             expect(req.show("foo")).to.equal(req);
         });
 
-        it('should set the title and content of the card', function() {
+        it('can create a simple card', function() {
             req.show('foo', 'bar');
             expect(req.toJSON().response.card).to.deep.equal({
                 type: "Simple",
                 title: 'foo',
                 content: 'bar'
+            });
+        });
+
+        it('can create a simple card', function() {
+            req.show({ title: 'test' });
+            expect(req.toJSON().response.card).to.deep.equal({
+                type: "Standard",
+                title: 'test',
             });
         });
     });

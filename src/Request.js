@@ -3,6 +3,9 @@ import transform from 'lodash/transform';
 import { EventEmitter } from 'events';
 import { toSpeechResponse } from './toSpeechResponse';
 import { getEventName } from './getEventName';
+import debug from 'debug';
+
+const log = debug('alexa-ability:ability:request');
 
 export class Request extends EventEmitter {
 
@@ -40,12 +43,22 @@ export class Request extends EventEmitter {
         return this;
     }
 
-    show(title, content) {
-        this._res.card = {
-            title,
-            content,
-            type: 'Simple',
-        };
+    show(card, text) {
+        if (typeof card === 'string') {
+            log('showing Simple card');
+            this._res.card = {
+                type: 'Simple',
+                title: card,
+                content: text,
+            };
+        } else {
+            log('showing Standard card type');
+            // TODO validation?
+            this._res.card = {
+                type: 'Standard',
+                ...card,
+            };
+        }
         return this;
     }
 
